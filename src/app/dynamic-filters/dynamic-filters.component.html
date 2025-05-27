@@ -1,0 +1,38 @@
+<form [formGroup]="filtersForm">
+  <div formArrayName="filters" class="d-flex flex-wrap gap-2">
+    <ng-container
+      *ngFor="let fg of filters.controls; let i = index"
+      [formGroupName]="i"
+    >
+      <div *ngIf="fg.get('isVisibleInRow')?.value" style="position: relative">
+        <div type="button" class="filter-btn" (click)="toggleDropdown(i)">
+          {{ fg.get("label")?.value }} &nbsp;
+          <span class="ml-2">
+            <i class="fa fa-angle-down"></i>
+          </span>
+        </div>
+
+        <div *ngIf="openDropdownIndex === i" class="button-options">
+          <div class="operator">
+            <label for="custom-dropdown" class="dropdown-label"
+              >Select Operator</label
+            >
+            <div class="custom-dropdown">
+              <select id="custom-dropdown" class="dropdown-select">
+                <option value="" disabled selected>Select an option</option>
+                <option
+                  *ngFor="let operator of getOperators(fg.get('field')?.value)"
+                  [value]="operator.value"
+                >
+                  {{ operator.label }}
+                </option>
+              </select>
+
+              <span class="dropdown-icon">▼</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+</form>

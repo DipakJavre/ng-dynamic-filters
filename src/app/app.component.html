@@ -1,0 +1,120 @@
+<div class="container">
+  <div class="mt-5">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">
+          <h4>Dynamic Filters Demo</h4>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="mt-3 mb-5">
+          <lib-dynamic-filters [filterList]="filterList"></lib-dynamic-filters>
+        </div>
+
+
+        <div class="table-responsive">
+          <table
+            class="table table-bordered table-hover table-striped align-middle"
+          >
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>City</th>
+                <th>Rating</th>
+                <th>Cuisine</th>
+                <th>Price Range</th>
+                <th>Features</th>
+                <th>Tags</th>
+                <th>Contact</th>
+                <th>Location</th>
+                <!-- <th>Available Tables</th>
+            <th>Revenue</th>
+            <th>Created At</th>
+            <th>Updated At</th>
+            <th>Menu</th> -->
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let r of restaurants">
+                <td>{{ r.name }}</td>
+                <td>{{ r.city }}</td>
+                <td>
+                  <span class="badge bg-success">{{ r.rating }}</span>
+                </td>
+                <td>
+                  <span
+                    *ngFor="let c of r.cuisine"
+                    class="badge bg-primary me-1"
+                    >{{ c }}</span
+                  >
+                </td>
+                <td>₹{{ r.priceRange.min }} - ₹{{ r.priceRange.max }}</td>
+                <td>
+                  <span
+                    *ngIf="r.features.outdoorSeating"
+                    class="badge bg-info text-dark me-1"
+                    >Outdoor</span
+                  >
+                  <span
+                    *ngIf="r.features.familyFriendly"
+                    class="badge bg-warning text-dark me-1"
+                    >Family</span
+                  >
+                  <span
+                    *ngIf="r.features.liveMusic"
+                    class="badge bg-danger me-1"
+                    >Music</span
+                  >
+                  <span
+                    *ngIf="r.features.wheelchairAccess"
+                    class="badge bg-secondary me-1"
+                    >Wheelchair</span
+                  >
+                </td>
+                <td>
+                  <span
+                    *ngFor="let t of r.tags"
+                    class="badge bg-light text-dark me-1 border"
+                    >{{ t }}</span
+                  >
+                </td>
+                <td>
+                  <div>{{ r.contact.phone }}</div>
+                  <div class="text-muted">
+                    <small>{{ r.contact.email }}</small>
+                  </div>
+                </td>
+                <td>
+                  {{ r.location.address.line1 }}
+                  <div *ngIf="r.location.address.line2">
+                    {{ r.location.address.line2 }}
+                  </div>
+                  <div>{{ r.location.address.zipcode }}</div>
+                </td>
+                <!-- <td>
+              <small>Lat: {{ r.location.coordinates[0] }}</small><br>
+              <small>Lng: {{ r.location.coordinates[1] }}</small>
+            </td>
+            <td>
+              {{ r.availableTables !== null ? r.availableTables : 'N/A' }}
+            </td> -->
+                <!-- <td>₹{{ r.revenue }}</td>
+            <td>{{ r.createdAt | date: 'mediumDate' }}</td>
+            <td>{{ r.updatedAt | date: 'mediumDate' }}</td>
+            <td>
+              <ul class="list-unstyled mb-0">
+                <li *ngFor="let m of r.menu">
+                  <span class="badge bg-success">{{ m.item }}</span> – ₹{{ m.price }}
+                </li>
+              </ul>
+            </td> -->
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<router-outlet />
