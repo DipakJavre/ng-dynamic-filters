@@ -3,36 +3,31 @@ import { FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { NgSelectModule } from "@ng-select/ng-select";
 import { OptionsDefinition } from "../common/common-utilities";
 
+
 @Component({
   standalone: true,
-  selector: 'app-select-value',
-  styleUrl: './value-input.scss',
+  selector: 'app-multiselect-value',
+  styleUrls: ['./value-input.scss'],
   template: `
     <div class="value-input-wrapper" [formGroup]="formGroup">
-      <label class="field-label" for="select-input">Select Option</label>
+      <label class="field-label" for="multiselect-input">Select Options</label>
       <ng-select
-        id="select-input"
         formControlName="value"
         [items]="options"
         bindLabel="label"
         bindValue="value"
         class="field-input"
-        placeholder="Choose an option"
-        [searchable]="false"
+        placeholder="Choose options"
+        [multiple]="true"
+        [closeOnSelect]="false"
+        [searchable]="true"
         [clearable]="true"
       ></ng-select>
     </div>
   `,
   imports: [ReactiveFormsModule, NgSelectModule],
 })
-export class SelectValueComponent implements OnInit {
+export class MultiSelectValueComponent {
   @Input() formGroup!: FormGroup;
   @Input() options: OptionsDefinition[] = [];
-
-  ngOnInit(): void {
-    console.log('SelectValueComponent initialized with options:', this.options);
-    console.log('formGroup:', this.formGroup);
-    
-  }
-  
 }

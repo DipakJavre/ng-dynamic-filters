@@ -1,4 +1,4 @@
-import { SupportedDataType } from "../../common/common-utilities";
+import { SupportedDataType } from "../common/common-utilities";
 
 export interface SelectOption {
   value: any;

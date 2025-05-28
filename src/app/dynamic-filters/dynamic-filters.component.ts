@@ -25,23 +25,23 @@ import {
   OperatorDefinition,
   operatorsMap,
   SupportedDataType,
-} from '../common/common-utilities';
+} from './common/common-utilities';
 import { NgFor, NgIf } from '@angular/common';
 import { AddNewFilterComponent } from './add-new-filter/add-new-filter.component';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { ValueComponentMap } from './value-components/value-component-map';
-import { TextValueComponent } from './value-components/text-value.component';
-import { NumberValueComponent } from './value-components/number-value.component';
-import { SelectValueComponent } from './value-components/select-value.component';
-import { BooleanValueComponent } from './value-components/boolean-value.component';
-import { DateValueComponent } from './value-components/date-value.component';
+
+import { QueryBuilderService } from './services/query-builder.service';
+import { HighlightJqlPipe } from './pipes/HighlightJqlPipe ';
+import { debounceTime } from 'rxjs';
 
 @Component({
   selector: 'lib-dynamic-filters',
   standalone: true,
-  imports: [ReactiveFormsModule, NgIf, NgFor, NgSelectModule],
+  imports: [ReactiveFormsModule, NgIf, NgFor, NgSelectModule, HighlightJqlPipe],
   templateUrl: './dynamic-filters.component.html',
   styleUrl: './dynamic-filters.component.scss',
+  providers: [QueryBuilderService],
 })
 export class DynamicFiltersComponent implements OnInit, OnDestroy {
   @ViewChild('valueInputContainer', { read: ViewContainerRef })
@@ -60,41 +60,52 @@ export class DynamicFiltersComponent implements OnInit, OnDestroy {
   filtersForm!: FormGroup;
   @Input() filterList: FilterDefinition[] = [];
 
-  componentMap: { [key: string]: Type<any> } = {
-    string: TextValueComponent,
-    number: NumberValueComponent,
-    select: SelectValueComponent,
-    boolean: BooleanValueComponent,
-    date: DateValueComponent,
-  };
+  jqlQuery: string = '';
 
   constructor(
     private fb: FormBuilder,
     private elementRef: ElementRef,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private queryBuilderService: QueryBuilderService
   ) {}
 
   ngOnInit(): void {
-    this.filtersForm = this.fb.group({
-      filters: this.fb.array([]),
-    });
     this.initializeFiltersForm();
 
-    this.filters.valueChanges.subscribe(() => {
-      if (this.isAddDropdownOpen) {
-        this.isAddDropdownOpen = false;
-        this.addDropdownDynamicContainer.clear();
-      }
-    });
+    this.filtersForm
+      .get('filters')
+      ?.valueChanges.pipe(debounceTime(100))
+      .subscribe(() => {
+        Promise.resolve().then(() => {
+          this.buildJQLQuery();
+
+          if (this.isAddDropdownOpen) {
+            this.isAddDropdownOpen = false;
+            this.addDropdownDynamicContainer.clear();
+          }
+        });
+      });
+  }
+  buildJQLQuery() {
+    const filters: any[] = this.filtersForm.get('filters')?.value || [];
+    if (filters.length) {
+      this.jqlQuery = this.queryBuilderService.buildJqlQuery(filters);
+    } else {
+      this.jqlQuery = ''; 
+    }
   }
 
   initializeFiltersForm() {
+    this.filtersForm = this.fb.group({
+      filters: this.fb.array([]),
+    });
+
     this.filterList.forEach((field) => {
-      const isArrayType = field.type.dataType === 'select';
+      const isMultipleType = field.type.dataType === 'multiSelect';
       const filterGroup = this.fb.group({
         operator: [null],
         field: [field.field],
-        value: [isArrayType ? [] : null],
+        value: [isMultipleType ? [] : null],
         isVisibleInRow: [field.isVisibleInRow],
         label: [field.label],
       });
@@ -107,18 +118,19 @@ export class DynamicFiltersComponent implements OnInit, OnDestroy {
       this.isAddDropdownOpen = false;
       this.addDropdownDynamicContainer.clear();
     }
+
     this.openDropdownIndex = this.openDropdownIndex === index ? -1 : index;
 
-    if (this.openDropdownIndex !== -1) {
-      const operatorValue = this.filters
-        .at(this.openDropdownIndex)
-        .get('operator')?.value;
+    if (this.openDropdownIndex === -1) return;
 
-      if (operatorValue) {
-        setTimeout(() => {
-          this.loadValueComponentDefault(this.openDropdownIndex);
-        });
-      }
+    const operatorValue = this.filters
+      .at(this.openDropdownIndex)
+      .get('operator')?.value;
+
+    if (operatorValue) {
+      setTimeout(() => {
+        this.loadValueComponentDefault(this.openDropdownIndex);
+      });
     }
   }
 
@@ -163,13 +175,13 @@ export class DynamicFiltersComponent implements OnInit, OnDestroy {
     const filterGroup = this.filters.at(i);
     if (filterGroup) {
       const fieldName = filterGroup.get('field')?.value;
-      const isArrayType =
+      const isMultipleType =
         this.filterList.find((f) => f.field === fieldName)?.type.dataType ===
-        'select';
+        'multiSelect';
 
       filterGroup.patchValue({
         operator: null,
-        value: isArrayType ? [] : null,
+        value: isMultipleType ? [] : null,
         isVisibleInRow: false,
       });
     }
@@ -213,7 +225,16 @@ export class DynamicFiltersComponent implements OnInit, OnDestroy {
       this.valueInputContainer.clear();
       const compRef = this.valueInputContainer.createComponent(componentType);
       compRef.instance.formGroup = this.filters.at(index);
+      if (fieldType === 'select' || fieldType === 'multiSelect') {
+        const options = this.getOptionsForField(fieldName);
+        compRef.instance.options = options;
+      }
     }
+  }
+
+  getOptionsForField(fieldName: string): { label: string; value: any }[] {
+    const field = this.filterList.find((f) => f.field === fieldName);
+    return field?.type?.options ?? [];
   }
 
   ngOnDestroy() {

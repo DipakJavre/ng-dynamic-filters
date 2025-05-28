@@ -48,4 +48,11 @@
       </div>
     </div>
   </div>
+  <div class="mt-4" *ngIf="jqlQuery">
+      <div class="alert alert-success w-100">
+        <h5 class="m-0">
+          <pre class="m-0" [innerHTML]="jqlQuery | highlightJql"></pre>
+        </h5>
+      </div>   
+  </div>
 </form>

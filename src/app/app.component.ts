@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { Restaurant } from './models/restaurant.model';
-import { RestaurantData } from './common/restaurants_records';
+import { RestaurantData } from './dynamic-filters/common/restaurants_records';
 import { FilterDefinition } from './dynamic-filters/utils/common-utilities';
 import { DynamicFiltersComponent } from './dynamic-filters/dynamic-filters.component';
 @Component({
@@ -33,7 +33,7 @@ export class AppComponent {
     {
       field: 'cuisine',
       label: 'Cuisine',
-      isVisibleInRow: false,
+      isVisibleInRow: true,
       type: {
         dataType: 'select',
         options: [
@@ -44,6 +44,22 @@ export class AppComponent {
         ],
       },
     },
+    {
+      field:'tags',
+      label: 'Tags',
+      isVisibleInRow: true,
+      type: {
+        dataType:'multiSelect',
+        options: [
+          { value: 'coffee', label: 'Coffee' },
+          { value: 'dessert', label: 'Dessert' },
+          { value: 'quiet', label: 'Quiet' },
+          { value: 'premium', label: 'Premium' },
+          { value: 'fine-dine', label: 'Fine Dine' },
+          { value: 'gourmet', label: 'Gourmet' }
+        ]
+      }
+    }
   
   ];
 

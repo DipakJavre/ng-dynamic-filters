@@ -1,4 +1,4 @@
-import { SelectOption } from '../dynamic-filters/utils/common-utilities';
+import { SelectOption } from '../utils/common-utilities';
 
 // export type QueryFieldType =
 //   | 'text'
@@ -43,6 +43,10 @@ export type SupportedDataType =
   | 'arrayOfObjects';
 
 export interface OperatorDefinition {
+  label: string;
+  value: string;
+}
+export interface OptionsDefinition {
   label: string;
   value: string;
 }

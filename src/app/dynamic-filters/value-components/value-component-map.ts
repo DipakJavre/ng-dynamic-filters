@@ -4,11 +4,13 @@ import { NumberValueComponent } from './number-value.component';
 import { SelectValueComponent } from './select-value.component';
 import { BooleanValueComponent } from './boolean-value.component';
 import { DateValueComponent } from './date-value.component';
+import { MultiSelectValueComponent } from './multi-select-value.component';
 
 export const ValueComponentMap: Record<string, Type<any>> = {
   string: TextValueComponent,
   number: NumberValueComponent,
   select: SelectValueComponent,
   boolean: BooleanValueComponent,
-  date: DateValueComponent
+  date: DateValueComponent,
+  multiSelect: MultiSelectValueComponent
 };
