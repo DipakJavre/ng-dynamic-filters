@@ -29,8 +29,12 @@
                 class="jira-ng-select"
                 placeholder="Select Operator"
                 [searchable]="false"
+                (ngModelChange)="onOperatorChange(i)"
               ></ng-select>
             </div>
+          </div>
+          <div class="value-container">
+            <ng-container #valueInputContainer></ng-container>
           </div>
         </div>
       </div>

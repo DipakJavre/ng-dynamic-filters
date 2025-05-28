@@ -35,7 +35,7 @@ export class AppComponent {
       label: 'Cuisine',
       isVisibleInRow: false,
       type: {
-        dataType: 'array',
+        dataType: 'select',
         options: [
           { value: 'North Indian', label: 'North Indian' },
           { value: 'Mughlai', label: 'Mughlai' },

@@ -1,4 +1,6 @@
 import {
+  AfterViewInit,
+  ChangeDetectorRef,
   Component,
   ComponentRef,
   ElementRef,
@@ -7,6 +9,7 @@ import {
   OnDestroy,
   OnInit,
   QueryList,
+  Type,
   ViewChild,
   ViewChildren,
   ViewContainerRef,
@@ -18,20 +21,32 @@ import {
   FormGroup,
   ReactiveFormsModule,
 } from '@angular/forms';
-import { OperatorDefinition, operatorsMap } from '../common/common-utilities';
+import {
+  OperatorDefinition,
+  operatorsMap,
+  SupportedDataType,
+} from '../common/common-utilities';
 import { NgFor, NgIf } from '@angular/common';
 import { AddNewFilterComponent } from './add-new-filter/add-new-filter.component';
 import { NgSelectModule } from '@ng-select/ng-select';
-
+import { ValueComponentMap } from './value-components/value-component-map';
+import { TextValueComponent } from './value-components/text-value.component';
+import { NumberValueComponent } from './value-components/number-value.component';
+import { SelectValueComponent } from './value-components/select-value.component';
+import { BooleanValueComponent } from './value-components/boolean-value.component';
+import { DateValueComponent } from './value-components/date-value.component';
 
 @Component({
   selector: 'lib-dynamic-filters',
   standalone: true,
-  imports: [ReactiveFormsModule, NgIf, NgFor,NgSelectModule],
+  imports: [ReactiveFormsModule, NgIf, NgFor, NgSelectModule],
   templateUrl: './dynamic-filters.component.html',
   styleUrl: './dynamic-filters.component.scss',
 })
 export class DynamicFiltersComponent implements OnInit, OnDestroy {
+  @ViewChild('valueInputContainer', { read: ViewContainerRef })
+  valueInputContainer!: ViewContainerRef;
+
   @ViewChildren('dropdownMenu') dropdownMenus!: QueryList<ElementRef>;
   @ViewChild('addDropdownWrapper', { static: false })
   addDropdownWrapper!: ElementRef;
@@ -45,7 +60,19 @@ export class DynamicFiltersComponent implements OnInit, OnDestroy {
   filtersForm!: FormGroup;
   @Input() filterList: FilterDefinition[] = [];
 
-  constructor(private fb: FormBuilder, private elementRef: ElementRef) {}
+  componentMap: { [key: string]: Type<any> } = {
+    string: TextValueComponent,
+    number: NumberValueComponent,
+    select: SelectValueComponent,
+    boolean: BooleanValueComponent,
+    date: DateValueComponent,
+  };
+
+  constructor(
+    private fb: FormBuilder,
+    private elementRef: ElementRef,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
     this.filtersForm = this.fb.group({
@@ -63,7 +90,7 @@ export class DynamicFiltersComponent implements OnInit, OnDestroy {
 
   initializeFiltersForm() {
     this.filterList.forEach((field) => {
-      const isArrayType = field.type.dataType === 'array';
+      const isArrayType = field.type.dataType === 'select';
       const filterGroup = this.fb.group({
         operator: [null],
         field: [field.field],
@@ -81,6 +108,22 @@ export class DynamicFiltersComponent implements OnInit, OnDestroy {
       this.addDropdownDynamicContainer.clear();
     }
     this.openDropdownIndex = this.openDropdownIndex === index ? -1 : index;
+
+    if (this.openDropdownIndex !== -1) {
+      const operatorValue = this.filters
+        .at(this.openDropdownIndex)
+        .get('operator')?.value;
+
+      if (operatorValue) {
+        setTimeout(() => {
+          this.loadValueComponentDefault(this.openDropdownIndex);
+        });
+      }
+    }
+  }
+
+  loadValueComponentDefault(index: number) {
+    this.loadValueComponent(index);
   }
 
   toggleAddDropdown() {
@@ -122,7 +165,7 @@ export class DynamicFiltersComponent implements OnInit, OnDestroy {
       const fieldName = filterGroup.get('field')?.value;
       const isArrayType =
         this.filterList.find((f) => f.field === fieldName)?.type.dataType ===
-        'array';
+        'select';
 
       filterGroup.patchValue({
         operator: null,
@@ -147,6 +190,30 @@ export class DynamicFiltersComponent implements OnInit, OnDestroy {
       this.addFilterDropdownComponentRef = null as any;
     }
     this.isAddDropdownOpen = false;
+  }
+
+  private getFieldType(fieldName: string): string {
+    const match = this.filterList.find((f) => f.field === fieldName);
+    return match?.type?.dataType ?? 'string';
+  }
+
+  onOperatorChange(index: number) {
+    this.cdr.detectChanges();
+    setTimeout(() => this.loadValueComponent(index));
+  }
+
+  loadValueComponent(index: number) {
+    const fieldName = this.filters.at(index).get('field')?.value;
+    const fieldType = this.getFieldType(fieldName) as SupportedDataType;
+    const componentType = ValueComponentMap[fieldType];
+
+    if (!componentType) return;
+
+    if (this.valueInputContainer) {
+      this.valueInputContainer.clear();
+      const compRef = this.valueInputContainer.createComponent(componentType);
+      compRef.instance.formGroup = this.filters.at(index);
+    }
   }
 
   ngOnDestroy() {
