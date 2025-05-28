@@ -140,3 +140,51 @@
 .value-input-wrapper ng-select {
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
+
+.search-box {
+  width: 100%;
+  padding: 10px 10px;
+  margin-bottom: 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: border-color 0.2s ease-in-out;
+
+  &:focus {
+    border-color: #0052cc;
+    outline: none;
+  }
+}
+
+.checkbox-list {
+  max-height: 450px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background-color: #f9f9f9;
+  padding: 10px;
+  min-height: 100px;
+}
+
+.checkbox-item-wrapper {
+  margin-bottom: 6px;
+  padding: 4px 6px;
+
+  &:hover {
+    background-color: #e5f0ff;
+    border-radius: 4px;
+  }
+}
+
+.checkbox-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #172b4d;
+  cursor: pointer;
+
+  input[type='checkbox'] {
+    accent-color: #0052cc;
+  }
+}

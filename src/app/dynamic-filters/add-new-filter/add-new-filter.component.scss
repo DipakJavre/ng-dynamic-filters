@@ -1,19 +1,24 @@
-.fields-form-group{
-    text-transform: uppercase;
-    font-size: 14px;
-    font-weight: 600;
-    border-bottom: 1px solid #A5ADBA;
-    margin-bottom: 15px;
-    p{
-        margin: 0 0 10px 0;
-        color: #172B4D;
-    }
+.fields-form-group {
+  text-transform: uppercase;
+  font-size: 14px;
+  font-weight: 600;
+
+  p {
+    margin: 0 0 10px 0;
+    color: #172b4d;
+  }
+}
+.chk-list {
+  border-radius: 6px;
+  background-color: #f9f9f9;
+  padding: 10px;
+  border: 1px solid #ddd;
 }
 .checkbox-wrapper {
   margin-bottom: 12px;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   font-size: 14px;
-  color: #172B4D;
+  color: #172b4d;
 
   .custom-checkbox {
     display: flex;
@@ -31,8 +36,8 @@
       width: 0;
 
       &:checked ~ .checkbox-mark {
-        background-color: #0052CC;
-        border-color: #0052CC;
+        background-color: #0052cc;
+        border-color: #0052cc;
 
         &::after {
           display: block;
@@ -48,7 +53,7 @@
       height: 16px;
       width: 16px;
       background-color: #fff;
-      border: 2px solid #A5ADBA;
+      border: 2px solid #a5adba;
       border-radius: 3px;
       transition: all 0.2s ease;
 

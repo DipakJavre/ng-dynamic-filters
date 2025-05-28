@@ -2,9 +2,8 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { Restaurant } from './models/restaurant.model';
-import { RestaurantData } from './dynamic-filters/common/restaurants_records';
-import { FilterDefinition } from './dynamic-filters/utils/common-utilities';
 import { DynamicFiltersComponent } from './dynamic-filters/dynamic-filters.component';
+import { FilterDefinition } from './dynamic-filters/utils/common-utilities';
 @Component({
   selector: 'app-root',
   imports: [RouterOutlet,CommonModule,DynamicFiltersComponent],

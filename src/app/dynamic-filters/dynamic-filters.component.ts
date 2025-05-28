@@ -14,7 +14,6 @@ import {
   ViewChildren,
   ViewContainerRef,
 } from '@angular/core';
-import { FilterDefinition } from './utils/common-utilities';
 import {
   FormArray,
   FormBuilder,
@@ -22,10 +21,11 @@ import {
   ReactiveFormsModule,
 } from '@angular/forms';
 import {
+  FilterDefinition,
   OperatorDefinition,
   operatorsMap,
   SupportedDataType,
-} from './common/common-utilities';
+} from './utils/common-utilities';
 import { NgFor, NgIf } from '@angular/common';
 import { AddNewFilterComponent } from './add-new-filter/add-new-filter.component';
 import { NgSelectModule } from '@ng-select/ng-select';
@@ -74,7 +74,7 @@ export class DynamicFiltersComponent implements OnInit, OnDestroy {
 
     this.filtersForm
       .get('filters')
-      ?.valueChanges.pipe(debounceTime(100))
+      ?.valueChanges.pipe()
       .subscribe(() => {
         Promise.resolve().then(() => {
           this.buildJQLQuery();
