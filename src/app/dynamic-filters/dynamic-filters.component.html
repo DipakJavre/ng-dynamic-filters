@@ -4,12 +4,13 @@
       *ngFor="let fg of filters.controls; let i = index"
       [formGroupName]="i"
     >
-      <div *ngIf="fg.get('isVisibleInRow')?.value" style="position: relative">
+      <div *ngIf="fg.get('isVisibleInRow')?.value" class="position-relative">
         <div type="button" class="filter-btn" (click)="toggleDropdown(i)">
           {{ fg.get("label")?.value }} &nbsp;
           <span class="ml-2">
             <i class="fa fa-angle-down"></i>
           </span>
+          <button class="close-icon" (click)="removeFilter(i)">&#10006;</button>
         </div>
 
         <div *ngIf="openDropdownIndex === i" class="button-options">
@@ -18,21 +19,29 @@
               >Select Operator</label
             >
             <div class="custom-dropdown">
-              <select id="custom-dropdown" class="dropdown-select">
-                <option value="" disabled selected>Select an option</option>
-                <option
-                  *ngFor="let operator of getOperators(fg.get('field')?.value)"
-                  [value]="operator.value"
-                >
-                  {{ operator.label }}
-                </option>
-              </select>
-
-              <span class="dropdown-icon">▼</span>
+              <ng-select
+                [items]="getOperators(fg.get('field')?.value)"
+                bindLabel="label"
+                bindValue="value"
+                formControlName="operator"
+                placeholder="Select an option"
+                [clearable]="true"
+                class="jira-ng-select"
+                placeholder="Select Operator"
+                [searchable]="false"
+              ></ng-select>
             </div>
           </div>
         </div>
       </div>
     </ng-container>
+    <div class="position-relative" #addDropdownWrapper>
+      <button type="button" class="add-btn" (click)="toggleAddDropdown()">
+        &nbsp; &#x2b; Add
+      </button>
+      <div class="all-filter-list" *ngIf="isAddDropdownOpen">
+        <ng-template #addDropdownDynamicContainer></ng-template>
+      </div>
+    </div>
   </div>
 </form>

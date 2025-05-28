@@ -1,0 +1,14 @@
+<div class="fields-form-group">
+  <p>Select fields to add filters</p>
+</div>
+<div
+  *ngFor="let fg of formGroups; let i = index"
+  [formGroup]="fg"
+  class="checkbox-wrapper"
+>
+  <label class="custom-checkbox">
+    <input type="checkbox" formControlName="isVisibleInRow" />
+    <span class="checkbox-mark"></span>
+    {{ fg.get("label")?.value }}
+  </label>
+</div>
