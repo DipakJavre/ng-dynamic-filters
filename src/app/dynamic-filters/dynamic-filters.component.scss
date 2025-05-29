@@ -28,6 +28,22 @@ $font-size: 14px;
   box-shadow: 0 4px 8px $box-shadow-color;
   border-radius: 4px;
   margin-top: 4px;
+  .clear-filters{
+    margin-top: 20px;
+    border-top: 1px solid $border-color;
+    display: flex;
+    justify-content: end;
+    p{
+      margin: 10px 0 0 0 ;
+      cursor: pointer;
+      font-size: 13px;
+      color: $primary-color;
+      font-weight: 500; 
+      &:hover{
+        font-weight: 600;
+      }
+    }
+  }
 }
 
 
@@ -199,6 +215,7 @@ $font-size: 14px;
   }
 }
 
+
 .info-icon {
   display: inline-block;
   position: relative;
@@ -219,7 +236,6 @@ $font-size: 14px;
     line-height: 1;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     margin-left: 10px;
-    padding-right: 1px;
   }
   
   .info-icon:hover .info-icon-circle {

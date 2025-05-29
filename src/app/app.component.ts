@@ -86,6 +86,15 @@ export class AppComponent {
         isMultiple: true,
       },
     },
+    {
+      field: 'price',
+      label: 'Price',
+      isVisibleInRow: true,
+      fieldInformation: 'Filter records based on price range',
+      type: {
+        dataType: 'number',
+      },
+    },
   ];
 
   restaurants: Restaurant[] = [

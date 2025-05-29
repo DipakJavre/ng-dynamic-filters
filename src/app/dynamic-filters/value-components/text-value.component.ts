@@ -7,7 +7,7 @@ import { FormGroup, ReactiveFormsModule } from "@angular/forms";
    styleUrl:'./value-input.scss',
   template: `
     <div class="value-input-wrapper" [formGroup]="formGroup">
-      <label for="textInput">Text Value</label>
+      <label for="textInput">Enter a value</label>
       <input
         id="textInput"
         type="text"

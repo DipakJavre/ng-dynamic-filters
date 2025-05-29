@@ -31,7 +31,10 @@ import { debounceTime, filter } from 'rxjs/operators';
 
       <div class="checkbox-list">
         <ng-container *ngIf="filteredOptions.length > 0; else noOptions">
-          <div *ngFor="let option of filteredOptions" class="checkbox-item-wrapper">
+          <div
+            *ngFor="let option of filteredOptions"
+            class="checkbox-item-wrapper"
+          >
             <label class="checkbox-item">
               <input
                 type="checkbox"
@@ -56,7 +59,8 @@ export class SelectValueComponent implements OnInit {
   @Input() allowSearch: boolean = false;
   @Input() field: string = '';
   @Input() isMultiple: boolean = false;
-  @Input() onSearch: ((searchText: string, fieldKey: string) => void) | null = null;
+  @Input() onSearch: ((searchText: string, fieldKey: string) => void) | null =
+    null;
 
   searchControl = new FormControl('');
   filteredOptions: SelectOption[] = [];
@@ -66,36 +70,45 @@ export class SelectValueComponent implements OnInit {
   ngOnInit(): void {
     const control = this.formGroup.get('value');
     const currentValue = control?.value;
-
     if (this.isMultiple && !Array.isArray(currentValue)) {
       control?.setValue([]);
     }
-
-    if (!this.isMultiple && typeof currentValue !== 'string' && currentValue !== null) {
+    if (
+      !this.isMultiple &&
+      typeof currentValue !== 'string' &&
+      currentValue !== null
+    ) {
       control?.setValue(null);
     }
 
     this.filteredOptions = [...this.options];
 
     this.searchControl.valueChanges
-      .pipe(debounceTime(500), filter(val => val !== null))
+      .pipe(
+        debounceTime(500),
+        filter((val) => val !== null)
+      )
       .subscribe((term) => {
-        const searchTerm = (term || '').toLowerCase();
-
-        if (this.allowSearch && typeof this.onSearch === 'function') {
-          this.onSearch(searchTerm, this.field);
-        } else {
-          this.filteredOptions = this.options.filter(option =>
-            option.label.toLowerCase().includes(searchTerm)
-          );
-          this.cdr.markForCheck(); // Update view
-        }
+        this.filterOptions(term || '');
       });
+  }
+
+  filterOptions(searchTerm: string): void {
+    if (this.allowSearch && typeof this.onSearch === 'function') {
+      this.onSearch(searchTerm, this.field);
+    } else {
+      this.filteredOptions = this.options.filter((option) =>
+        option.label.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      this.cdr.markForCheck();
+    }
   }
 
   isSelected(value: any): boolean {
     const current = this.formGroup.get('value')?.value;
-    return this.isMultiple ? (Array.isArray(current) && current.includes(value)) : current === value;
+    return this.isMultiple
+      ? Array.isArray(current) && current.includes(value)
+      : current === value;
   }
 
   onCheckboxChange(value: any, event: Event): void {

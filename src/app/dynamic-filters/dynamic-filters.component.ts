@@ -12,7 +12,6 @@ import {
   Output,
   QueryList,
   SimpleChanges,
-  Type,
   ViewChild,
   ViewChildren,
   ViewContainerRef,
@@ -226,23 +225,19 @@ export class DynamicFiltersComponent implements OnInit, OnDestroy, OnChanges {
     return this.filtersForm.get('filters') as FormArray;
   }
 
-  // removeFilter(i: number) {
-  //   const filterGroup = this.filters.at(i);
-  //   if (filterGroup) {
-  //     const fieldName = filterGroup.get('field')?.value;
-  //     const isMultipleType =
-  //       this.filterList.find((f) => f.field === fieldName)?.type.isMultiple
+  clearFilters(i: number) {
+    const filterGroup = this.filters.at(i);
+    if (filterGroup) {
+      const fieldName = filterGroup.get('field')?.value;
+      const isMultipleType =
+        this.filterList.find((f) => f.field === fieldName)?.type.isMultiple
 
-  //     filterGroup.patchValue({
-  //       operator: null,
-  //       value: isMultipleType ? [] : null,
-  //       isVisibleInRow: false,
-  //     });
-  //   }
-  //   if (this.openDropdownIndex() === i) {
-  //     this.openDropdownIndex.set(-1);
-  //   }
-  // }
+      filterGroup.patchValue({
+        operator: null,
+        value: isMultipleType ? [] : null,
+      });
+    }
+  }
 
   destroyAddFilterDropdown() {
     if (this.addFilterDropdownComponentRef) {

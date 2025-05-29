@@ -6,7 +6,9 @@ export class QueryBuilderService {
   constructor() {}
 
   buildJqlQuery(filters: FilterResult[]): string {
-    const jqlParts = filters.map(filter => this.transformFilterToJql(filter)).filter(Boolean);
+    const jqlParts = filters
+      .map((filter) => this.transformFilterToJql(filter))
+      .filter(Boolean);
     return jqlParts.join(' AND ');
   }
 
@@ -15,7 +17,7 @@ export class QueryBuilderService {
 
     if (value === null || value === undefined || value === '') return null;
 
-    if(!operator) return '';
+    if (!operator) return '';
     switch (operator) {
       case '=':
       case '!=':
@@ -32,7 +34,7 @@ export class QueryBuilderService {
         return `${field} !~ ${this.formatValue(value)}`;
 
       case 'startsWith':
-        return `${field} ~ "${value}*"`; 
+        return `${field} ~ "${value}*"`;
 
       case 'endsWith':
         return `${field} ~ "*${value}"`;
@@ -49,6 +51,18 @@ export class QueryBuilderService {
       case 'is not':
         return `${field} is not ${value}`;
 
+      case 'between':
+        if (
+          typeof value === 'object' &&
+          value !== null &&
+          typeof value.min === 'number' &&
+          typeof value.max === 'number'
+        ) {
+          return `(${field} >= ${value.min} AND ${field} <= ${value.max})`;
+        } else {
+          return null; 
+        }
+
       default:
         throw new Error(`Unsupported operator: ${operator}`);
     }
@@ -59,9 +73,9 @@ export class QueryBuilderService {
   }
 
   private formatArray(values: any[]): string {
-    if(typeof values === 'string') {
-      return values
+    if (typeof values === 'string') {
+      return values;
     }
-    return values.map(v => this.formatValue(v)).join(', ');
+    return values.map((v) => this.formatValue(v)).join(', ');
   }
 }

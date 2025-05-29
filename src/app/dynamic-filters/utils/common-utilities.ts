@@ -48,6 +48,7 @@ export const operatorsMap = {
     { label: 'Less Than or Equal', value: '<=' },
     { label: 'Greater Than', value: '>' },
     { label: 'Greater Than or Equal', value: '>=' },
+    { label: 'Between', value: 'between' },
     { label: 'In', value: 'in' },
     { label: 'Not In', value: 'not in' },
   ],

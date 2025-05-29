@@ -15,9 +15,8 @@
             *ngIf="fieldInfoMap.get(fg.get('field')?.value)"
             [title]="fieldInfoMap.get(fg.get('field')?.value)"
           >
-            <span class="info-icon-circle">i</span>
+            <span class="info-icon-circle">𝒊</span>
           </div>
-          <!-- <button class="close-icon" (click)="removeFilter(i)">&#10006;</button> -->
         </div>
 
         <div *ngIf="openDropdownIndex() === i" class="button-options">
@@ -42,6 +41,10 @@
           </div>
           <div class="value-container">
             <ng-container #valueInputContainer></ng-container>
+          </div>
+
+          <div class="clear-filters" *ngIf="fg.get('value')?.value">
+            <p (click)="clearFilters(i)">Clear Filters</p>
           </div>
         </div>
       </div>
