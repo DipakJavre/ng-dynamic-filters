@@ -15,4 +15,21 @@ export class AddNewFilterComponent {
   get formGroups(): FormGroup[] {
     return this.filters.controls as FormGroup[];
   }
+
+  onChangeFilterType(index: number): void {
+     const filterGroup = this.filters.at(index) as FormGroup;
+    if (filterGroup) {
+      console.log(filterGroup.value);
+        filterGroup.patchValue({
+        operator: null,
+        value: null,
+      });
+      // const fieldName = filterGroup.get('field')?.value;
+      // filterGroup.patchValue({
+      //   operator: null,
+      //   value: isMultipleType ? [] : null,
+      //   isVisibleInRow: false,
+      // });
+    }
+  }
 }

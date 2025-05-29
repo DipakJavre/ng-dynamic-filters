@@ -100,7 +100,7 @@ export class DynamicFiltersComponent implements OnInit, OnDestroy, OnChanges {
       const newFieldDef = this.filterList.find((f) => f.field === field);
       if (newFieldDef) {
         const value = ctrl.get('value')?.value;
-        const isMulti = newFieldDef.type.dataType === 'multiSelect';
+        const isMulti = newFieldDef.type.isMultiple;
         if (isMulti && !Array.isArray(value)) {
           ctrl.get('value')?.setValue([]);
         }
@@ -126,7 +126,7 @@ export class DynamicFiltersComponent implements OnInit, OnDestroy, OnChanges {
     });
 
     this.filterList.forEach((field) => {
-      const isMultipleType = field.type.dataType === 'multiSelect';
+      const isMultipleType = field.type.isMultiple;
       const filterGroup = this.fb.group({
         operator: [null],
         field: [field.field],
@@ -197,24 +197,23 @@ export class DynamicFiltersComponent implements OnInit, OnDestroy, OnChanges {
     return this.filtersForm.get('filters') as FormArray;
   }
 
-  removeFilter(i: number) {
-    const filterGroup = this.filters.at(i);
-    if (filterGroup) {
-      const fieldName = filterGroup.get('field')?.value;
-      const isMultipleType =
-        this.filterList.find((f) => f.field === fieldName)?.type.dataType ===
-        'multiSelect';
+  // removeFilter(i: number) {
+  //   const filterGroup = this.filters.at(i);
+  //   if (filterGroup) {
+  //     const fieldName = filterGroup.get('field')?.value;
+  //     const isMultipleType =
+  //       this.filterList.find((f) => f.field === fieldName)?.type.isMultiple
 
-      filterGroup.patchValue({
-        operator: null,
-        value: isMultipleType ? [] : null,
-        isVisibleInRow: false,
-      });
-    }
-    if (this.openDropdownIndex() === i) {
-      this.openDropdownIndex.set(-1);
-    }
-  }
+  //     filterGroup.patchValue({
+  //       operator: null,
+  //       value: isMultipleType ? [] : null,
+  //       isVisibleInRow: false,
+  //     });
+  //   }
+  //   if (this.openDropdownIndex() === i) {
+  //     this.openDropdownIndex.set(-1);
+  //   }
+  // }
 
   getOperators(field: string): OperatorDefinition[] {
     const dataType = this.filterList.find((f) => f.field === field)?.type
@@ -258,7 +257,7 @@ export class DynamicFiltersComponent implements OnInit, OnDestroy, OnChanges {
     const { fieldName, fieldType } = this.getComponentInfo(
       this.openDropdownIndex()
     );
-    if (fieldType === 'select' || fieldType === 'multiSelect') {
+    if (fieldType === 'select') {
       const options = this.getOptionsForField(fieldName);
       this.valueComponentRef.instance.updateOptions([...options]);
       this.valueComponentRef.changeDetectorRef.markForCheck();
@@ -280,11 +279,12 @@ export class DynamicFiltersComponent implements OnInit, OnDestroy, OnChanges {
     const instance = this.valueComponentRef.instance;
     instance.formGroup = this.filters.at(index);
 
-    if (fieldType === 'select' || fieldType === 'multiSelect') {
+    if (fieldType === 'select') {
       instance.options = [...this.getOptionsForField(fieldName)];
       instance.allowSearch = this.filterList[index]?.type?.allowSearch;
       instance.onSearch = this.filterList[index]?.type?.onSearch;
       instance.field = this.filterList[index]?.field;
+      instance.isMultiple = this.filterList[index].type?.isMultiple;
     }
   }
 

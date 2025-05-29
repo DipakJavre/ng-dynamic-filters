@@ -11,12 +11,10 @@ export interface FilterDefinition {
   isVisibleInRow: boolean;
   type: {
     dataType: SupportedDataType;
-    // options?: SelectOption[] | Promise<SelectOption[]> | Observable<SelectOption[]>;
     options?: SelectOption[];
     allowSearch?: boolean;
-    searchOptions?: OptionsDefinition[];
-    searchText?: string;
     onSearch?: (searchText: string, fieldKey: string) => void;
+    isMultiple?: boolean;
   };
 }
 
@@ -28,7 +26,6 @@ export type SupportedDataType =
   | 'boolean'
   | 'select'
   | 'object'
-  | 'multiSelect'
   | 'arrayOfObjects';
 
 export interface OperatorDefinition {
@@ -82,10 +79,6 @@ export const operatorsMap = {
     { label: 'Is Not', value: 'is not' },
   ],
   select: [
-    { label: 'Contains', value: 'contains' },
-    { label: 'Does Not Contain', value: 'not contains' },
-  ],
-  multiSelect: [
     { label: 'Contains', value: 'contains' },
     { label: 'Does Not Contain', value: 'not contains' },
   ],

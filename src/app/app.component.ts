@@ -3,8 +3,12 @@ import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { Restaurant } from './models/restaurant.model';
 import { DynamicFiltersComponent } from './dynamic-filters/dynamic-filters.component';
-import { FilterDefinition } from './dynamic-filters/utils/common-utilities';
+import {
+  FilterDefinition,
+  OptionsDefinition,
+} from './dynamic-filters/utils/common-utilities';
 import { FakeApiService } from './fake-api.service';
+import { menuList } from './dynamic-filters/utils/restaurants_records';
 @Component({
   selector: 'app-root',
   imports: [RouterOutlet, CommonModule, DynamicFiltersComponent],
@@ -44,6 +48,8 @@ export class AppComponent {
           { value: 'Continental', label: 'Continental' },
           { value: 'Italian', label: 'Italian' },
         ],
+        allowSearch: false,
+        onSearch: this.onSearchFactory(),
       },
     },
     {
@@ -51,8 +57,14 @@ export class AppComponent {
       label: 'Menu',
       isVisibleInRow: true,
       type: {
-        dataType: 'multiSelect',
-        options: [],
+        dataType: 'select',
+        options: [
+          { value: 'North Indian', label: 'North Indian' },
+          { value: 'Mughlai', label: 'Mughlai' },
+          { value: 'Continental', label: 'Continental' },
+          { value: 'Italian', label: 'Italian' },
+        ],
+        isMultiple: true,
         allowSearch: true,
         onSearch: this.onSearchFactory(),
       },
@@ -62,7 +74,7 @@ export class AppComponent {
       label: 'Tags',
       isVisibleInRow: true,
       type: {
-        dataType: 'multiSelect',
+        dataType: 'select',
         options: [
           { value: 'coffee', label: 'Coffee' },
           { value: 'dessert', label: 'Dessert' },
@@ -71,6 +83,7 @@ export class AppComponent {
           { value: 'fine-dine', label: 'Fine Dine' },
           { value: 'gourmet', label: 'Gourmet' },
         ],
+        isMultiple: true,
       },
     },
   ];
@@ -190,20 +203,22 @@ export class AppComponent {
     return (searchText: string, fieldKey: string) => {
       const field = this.filterList.find((f) => f.field === fieldKey);
       if (field) {
-        field.type.options = [
-          {
-            label: 'Option 1',
-            value: 'option1',
-          },
-        ];
-        this.filterList = [...this.filterList];
+        field.type.options = this.filteredOptions(searchText);
+        setTimeout(() => {
+          this.filterList = [...this.filterList];
+        }, 1000);
       }
     };
   }
 
-  async fetchOptions() {
-    this.fakeAPIService.getMenuItems().subscribe((data) => {
-      console.log(data);
-    });
+  filteredOptions(searchText: string): OptionsDefinition[] {
+    const text = searchText.trim().toLowerCase();
+    const menu = menuList;
+    return menu
+      .filter((item:any) => item.item.toLowerCase().includes(text))
+      .map((item:any) => ({
+        label: item.item,
+        value: item.item,
+      }));
   }
 }

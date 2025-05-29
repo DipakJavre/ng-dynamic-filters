@@ -1,16 +1,26 @@
-import { Component, Input, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  Input,
+  OnInit,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { OptionsDefinition } from '../utils/common-utilities';
+import { debounceTime, filter } from 'rxjs/operators';
 
 @Component({
   standalone: true,
   selector: 'app-select-value',
   styleUrls: ['./value-input.scss'],
   imports: [CommonModule, ReactiveFormsModule],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="value-input-wrapper" [formGroup]="formGroup">
-      <label class="field-label">Select Option</label>
+      <label class="field-label">
+        {{ isMultiple ? 'Select Options' : 'Select Option' }}
+      </label>
 
       <input
         type="text"
@@ -26,7 +36,7 @@ import { OptionsDefinition } from '../utils/common-utilities';
               <input
                 type="checkbox"
                 [checked]="isSelected(option.value)"
-                (change)="onCheckboxChange(option.value)"
+                (change)="onCheckboxChange(option.value, $event)"
               />
               {{ option.label }}
             </label>
@@ -43,38 +53,70 @@ import { OptionsDefinition } from '../utils/common-utilities';
 export class SelectValueComponent implements OnInit {
   @Input() formGroup!: FormGroup;
   @Input() options: OptionsDefinition[] = [];
+  @Input() allowSearch: boolean = false;
+  @Input() field: string = '';
+  @Input() isMultiple: boolean = false;
+  @Input() onSearch: ((searchText: string, fieldKey: string) => void) | null = null;
 
   searchControl = new FormControl('');
   filteredOptions: OptionsDefinition[] = [];
 
+  constructor(private cdr: ChangeDetectorRef) {}
+
   ngOnInit(): void {
     const control = this.formGroup.get('value');
-    if (control && typeof control.value !== 'string' && control.value !== null) {
-      control.setValue(null);
+    const currentValue = control?.value;
+
+    if (this.isMultiple && !Array.isArray(currentValue)) {
+      control?.setValue([]);
+    }
+
+    if (!this.isMultiple && typeof currentValue !== 'string' && currentValue !== null) {
+      control?.setValue(null);
     }
 
     this.filteredOptions = [...this.options];
 
-    this.searchControl.valueChanges.subscribe(search => {
-      const keyword = (search || '').toLowerCase();
-      this.filteredOptions = this.options.filter(option =>
-        option.label.toLowerCase().includes(keyword)
-      );
-    });
+    this.searchControl.valueChanges
+      .pipe(debounceTime(500), filter(val => val !== null))
+      .subscribe((term) => {
+        const searchTerm = (term || '').toLowerCase();
+
+        if (this.allowSearch && typeof this.onSearch === 'function') {
+          this.onSearch(searchTerm, this.field);
+        } else {
+          this.filteredOptions = this.options.filter(option =>
+            option.label.toLowerCase().includes(searchTerm)
+          );
+          this.cdr.markForCheck(); // Update view
+        }
+      });
   }
 
   isSelected(value: any): boolean {
-    return this.formGroup.get('value')?.value === value;
+    const current = this.formGroup.get('value')?.value;
+    return this.isMultiple ? (Array.isArray(current) && current.includes(value)) : current === value;
   }
 
-  onCheckboxChange(value: any): void {
+  onCheckboxChange(value: any, event: Event): void {
     const control = this.formGroup.get('value');
     if (!control) return;
 
-    control.setValue(control.value === value ? null : value);
+    if (this.isMultiple) {
+      const selected = new Set(control.value || []);
+      if ((event.target as HTMLInputElement).checked) {
+        selected.add(value);
+      } else {
+        selected.delete(value);
+      }
+      control.setValue([...selected]);
+    } else {
+      control.setValue(control.value === value ? null : value);
+    }
   }
 
   updateOptions(options: OptionsDefinition[]) {
     this.filteredOptions = [...options];
+    this.cdr.markForCheck();
   }
 }

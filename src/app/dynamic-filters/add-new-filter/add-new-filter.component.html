@@ -8,7 +8,7 @@
     class="checkbox-wrapper"
   >
     <label class="custom-checkbox">
-      <input type="checkbox" formControlName="isVisibleInRow" />
+      <input type="checkbox" (change)="onChangeFilterType(i)" formControlName="isVisibleInRow" />
       <span class="checkbox-mark"></span>
       {{ fg.get("label")?.value }}
     </label>
