@@ -7,7 +7,7 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { OptionsDefinition } from '../utils/common-utilities';
+import { SelectOption } from '../utils/common-utilities';
 import { debounceTime, filter } from 'rxjs/operators';
 
 @Component({
@@ -52,14 +52,14 @@ import { debounceTime, filter } from 'rxjs/operators';
 })
 export class SelectValueComponent implements OnInit {
   @Input() formGroup!: FormGroup;
-  @Input() options: OptionsDefinition[] = [];
+  @Input() options: SelectOption[] = [];
   @Input() allowSearch: boolean = false;
   @Input() field: string = '';
   @Input() isMultiple: boolean = false;
   @Input() onSearch: ((searchText: string, fieldKey: string) => void) | null = null;
 
   searchControl = new FormControl('');
-  filteredOptions: OptionsDefinition[] = [];
+  filteredOptions: SelectOption[] = [];
 
   constructor(private cdr: ChangeDetectorRef) {}
 
@@ -115,7 +115,7 @@ export class SelectValueComponent implements OnInit {
     }
   }
 
-  updateOptions(options: OptionsDefinition[]) {
+  updateOptions(options: SelectOption[]) {
     this.filteredOptions = [...options];
     this.cdr.markForCheck();
   }

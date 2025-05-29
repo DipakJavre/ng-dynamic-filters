@@ -1,8 +1,8 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import {
   FilterDefinition,
-  OperatorDefinition,
   operatorsMap,
+  SelectOption,
 } from '../utils/common-utilities';
 
 @Pipe({
@@ -10,7 +10,7 @@ import {
   pure: true,
 })
 export class OperatorsPipe implements PipeTransform {
-  transform(field: string, filters: FilterDefinition[]): OperatorDefinition[] {
+  transform(field: string, filters: FilterDefinition[]): SelectOption[] {
     const dataType = filters.find((f) => f.field === field)?.type?.dataType;    
     return dataType ? operatorsMap[dataType] ?? [] : [];
   }

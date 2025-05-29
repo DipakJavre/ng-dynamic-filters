@@ -3,11 +3,13 @@ import {
   Component,
   ComponentRef,
   ElementRef,
+  EventEmitter,
   HostListener,
   Input,
   OnChanges,
   OnDestroy,
   OnInit,
+  Output,
   QueryList,
   SimpleChanges,
   Type,
@@ -24,8 +26,7 @@ import {
 } from '@angular/forms';
 import {
   FilterDefinition,
-  OperatorDefinition,
-  operatorsMap,
+  FilterResult,
   SupportedDataType,
 } from './utils/common-utilities';
 import { NgFor, NgIf } from '@angular/common';
@@ -39,7 +40,14 @@ import { OperatorsPipe } from './pipes/operator.pipe';
 @Component({
   selector: 'lib-dynamic-filters',
   standalone: true,
-  imports: [ReactiveFormsModule, NgIf, NgFor, NgSelectModule, HighlightJqlPipe, OperatorsPipe],
+  imports: [
+    ReactiveFormsModule,
+    NgIf,
+    NgFor,
+    NgSelectModule,
+    HighlightJqlPipe,
+    OperatorsPipe,
+  ],
   templateUrl: './dynamic-filters.component.html',
   styleUrl: './dynamic-filters.component.scss',
   providers: [QueryBuilderService],
@@ -64,6 +72,7 @@ export class DynamicFiltersComponent implements OnInit, OnDestroy, OnChanges {
   filtersForm!: FormGroup;
 
   @Input() filterList: FilterDefinition[] = [];
+  @Output() result = new EventEmitter<FilterResult[]>();
 
   constructor(
     private fb: FormBuilder,
@@ -112,12 +121,25 @@ export class DynamicFiltersComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   buildJQLQuery() {
-    const filters: any[] = this.filtersForm.get('filters')?.value || [];
+    const filters: FilterResult[] = this.filtersForm.get('filters')?.value;
     if (filters.length) {
       this.jqlQuery.set(this.queryBuilderService.buildJqlQuery(filters));
     } else {
       this.jqlQuery.set('');
     }
+    this.result.emit(
+      filters
+        .filter(
+          (f: FilterResult) => f.value !== null && f.value !== '' && f.operator
+        )
+        .map((f: FilterResult) => {
+          return {
+            field: f.field,
+            operator: f.operator,
+            value: f.value,
+          };
+        })
+    );
   }
 
   initializeFiltersForm() {
@@ -221,7 +243,6 @@ export class DynamicFiltersComponent implements OnInit, OnDestroy, OnChanges {
   //     this.openDropdownIndex.set(-1);
   //   }
   // }
-
 
   destroyAddFilterDropdown() {
     if (this.addFilterDropdownComponentRef) {

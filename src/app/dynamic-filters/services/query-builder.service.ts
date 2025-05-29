@@ -1,15 +1,16 @@
 import { Injectable } from '@angular/core';
+import { FilterResult } from '../utils/common-utilities';
 
 @Injectable()
 export class QueryBuilderService {
   constructor() {}
 
-  buildJqlQuery(filters: any[]): string {
+  buildJqlQuery(filters: FilterResult[]): string {
     const jqlParts = filters.map(filter => this.transformFilterToJql(filter)).filter(Boolean);
     return jqlParts.join(' AND ');
   }
 
-  private transformFilterToJql(filter: any): string | null {
+  private transformFilterToJql(filter: FilterResult): string | null {
     const { field, operator, value } = filter;
 
     if (value === null || value === undefined || value === '') return null;
@@ -58,6 +59,9 @@ export class QueryBuilderService {
   }
 
   private formatArray(values: any[]): string {
+    if(typeof values === 'string') {
+      return values
+    }
     return values.map(v => this.formatValue(v)).join(', ');
   }
 }

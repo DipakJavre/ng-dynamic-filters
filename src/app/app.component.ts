@@ -5,7 +5,8 @@ import { Restaurant } from './models/restaurant.model';
 import { DynamicFiltersComponent } from './dynamic-filters/dynamic-filters.component';
 import {
   FilterDefinition,
-  OptionsDefinition,
+  FilterResult,
+  SelectOption,
 } from './dynamic-filters/utils/common-utilities';
 import { FakeApiService } from './fake-api.service';
 import { menuList } from './dynamic-filters/utils/restaurants_records';
@@ -17,8 +18,6 @@ import { menuList } from './dynamic-filters/utils/restaurants_records';
   providers: [FakeApiService],
 })
 export class AppComponent {
-  constructor(private fakeAPIService: FakeApiService) {}
-
   filterList: FilterDefinition[] = [
     {
       field: 'name',
@@ -199,6 +198,8 @@ export class AppComponent {
       updatedAt: '2024-03-02T00:00:00',
     },
   ];
+  result: FilterResult[] = [];
+  constructor(private fakeAPIService: FakeApiService) {}
 
   onSearchFactory(): (searchText: string, fieldKey: string) => void {
     return (searchText: string, fieldKey: string) => {
@@ -212,14 +213,18 @@ export class AppComponent {
     };
   }
 
-  filteredOptions(searchText: string): OptionsDefinition[] {
+  filteredOptions(searchText: string): SelectOption[] {
     const text = searchText.trim().toLowerCase();
     const menu = menuList;
     return menu
-      .filter((item:any) => item.item.toLowerCase().includes(text))
-      .map((item:any) => ({
+      .filter((item: any) => item.item.toLowerCase().includes(text))
+      .map((item: any) => ({
         label: item.item,
         value: item.item,
       }));
+  }
+
+  filterResults(event: FilterResult[]) {
+    this.result = event;
   }
 }
