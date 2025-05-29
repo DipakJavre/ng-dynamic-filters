@@ -4,12 +4,11 @@ import { FormArray, FormGroup, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-add-new-filter',
-  imports: [NgFor,ReactiveFormsModule],
+  imports: [NgFor, ReactiveFormsModule],
   templateUrl: './add-new-filter.component.html',
   styleUrl: './add-new-filter.component.scss',
 })
 export class AddNewFilterComponent {
-
   @Input() filters!: FormArray;
 
   get formGroups(): FormGroup[] {
@@ -17,19 +16,12 @@ export class AddNewFilterComponent {
   }
 
   onChangeFilterType(index: number): void {
-     const filterGroup = this.filters.at(index) as FormGroup;
+    const filterGroup = this.filters.at(index) as FormGroup;
     if (filterGroup) {
-      console.log(filterGroup.value);
-        filterGroup.patchValue({
+      filterGroup.patchValue({
         operator: null,
         value: null,
       });
-      // const fieldName = filterGroup.get('field')?.value;
-      // filterGroup.patchValue({
-      //   operator: null,
-      //   value: isMultipleType ? [] : null,
-      //   isVisibleInRow: false,
-      // });
     }
   }
 }

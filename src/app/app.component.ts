@@ -32,6 +32,7 @@ export class AppComponent {
       field: 'rating',
       label: 'Ratting',
       isVisibleInRow: true,
+      fieldInformation: 'Rating of the restaurant',
       type: {
         dataType: 'number',
       },

@@ -34,11 +34,12 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import { ValueComponentMap } from './value-components/value-component-map';
 import { QueryBuilderService } from './services/query-builder.service';
 import { HighlightJqlPipe } from './pipes/HighlightJqlPipe ';
+import { OperatorsPipe } from './pipes/operator.pipe';
 
 @Component({
   selector: 'lib-dynamic-filters',
   standalone: true,
-  imports: [ReactiveFormsModule, NgIf, NgFor, NgSelectModule, HighlightJqlPipe],
+  imports: [ReactiveFormsModule, NgIf, NgFor, NgSelectModule, HighlightJqlPipe, OperatorsPipe],
   templateUrl: './dynamic-filters.component.html',
   styleUrl: './dynamic-filters.component.scss',
   providers: [QueryBuilderService],
@@ -54,6 +55,7 @@ export class DynamicFiltersComponent implements OnInit, OnDestroy, OnChanges {
   @ViewChild('addDropdownDynamicContainer', { read: ViewContainerRef })
   addDropdownDynamicContainer!: ViewContainerRef;
   addFilterDropdownComponentRef!: ComponentRef<any>;
+  fieldInfoMap = new Map<string, string>();
 
   openDropdownIndex = signal<number>(-1);
   isAddDropdownOpen = signal(false);
@@ -72,14 +74,12 @@ export class DynamicFiltersComponent implements OnInit, OnDestroy, OnChanges {
 
   ngOnInit(): void {
     this.initializeFiltersForm();
-
     this.filtersForm
       .get('filters')
       ?.valueChanges.pipe()
       .subscribe(() => {
         Promise.resolve().then(() => {
           this.buildJQLQuery();
-
           if (this.isAddDropdownOpen()) {
             this.isAddDropdownOpen.set(false);
             this.addDropdownDynamicContainer.clear();
@@ -135,7 +135,14 @@ export class DynamicFiltersComponent implements OnInit, OnDestroy, OnChanges {
         label: [field.label],
       });
       this.filters.push(filterGroup);
+
+      // Map field information for display
+      this.mapFieldInformation(field);
     });
+  }
+
+  mapFieldInformation(field: FilterDefinition) {
+    this.fieldInfoMap.set(field.field, field.fieldInformation || '');
   }
 
   toggleDropdown(index: number) {
@@ -215,11 +222,6 @@ export class DynamicFiltersComponent implements OnInit, OnDestroy, OnChanges {
   //   }
   // }
 
-  getOperators(field: string): OperatorDefinition[] {
-    const dataType = this.filterList.find((f) => f.field === field)?.type
-      ?.dataType;
-    return dataType ? operatorsMap[dataType] ?? [] : [];
-  }
 
   destroyAddFilterDropdown() {
     if (this.addFilterDropdownComponentRef) {

@@ -198,3 +198,35 @@ $font-size: 14px;
     background-color: #deebff;
   }
 }
+
+.info-icon {
+  display: inline-block;
+  position: relative;
+  cursor: pointer;
+  font-family: Arial, sans-serif;
+  .info-icon-circle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    background-color: #0052cc; 
+    color: white;
+    border-radius: 50%;
+    font-weight: bold;
+    font-size: 12px;
+    text-align: center;
+    line-height: 1;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-left: 10px;
+    padding-right: 1px;
+  }
+  
+  .info-icon:hover .info-icon-circle {
+    background-color: #003c8f;
+  }
+  
+  .info-icon:focus .info-icon-circle {
+    outline: 2px solid #ffab00; 
+  }
+}

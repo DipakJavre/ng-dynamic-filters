@@ -9,6 +9,7 @@ export interface FilterDefinition {
   field: string;
   label: string;
   isVisibleInRow: boolean;
+  fieldInformation?: string;
   type: {
     dataType: SupportedDataType;
     options?: SelectOption[];

@@ -10,6 +10,13 @@
           <span class="ml-2">
             <i class="fa fa-angle-down"></i>
           </span>
+          <div
+            class="info-icon"
+            *ngIf="fieldInfoMap.get(fg.get('field')?.value)"
+            [title]="fieldInfoMap.get(fg.get('field')?.value)"
+          >
+            <span class="info-icon-circle">i</span>
+          </div>
           <!-- <button class="close-icon" (click)="removeFilter(i)">&#10006;</button> -->
         </div>
 
@@ -20,7 +27,7 @@
             >
             <div class="custom-dropdown">
               <ng-select
-                [items]="getOperators(fg.get('field')?.value)"
+                [items]="fg.get('field')?.value | operators: filterList"
                 bindLabel="label"
                 bindValue="value"
                 formControlName="operator"
@@ -49,10 +56,10 @@
     </div>
   </div>
   <div class="mt-4" *ngIf="jqlQuery()">
-      <div class="alert alert-success w-100">
-        <h5 class="m-0">
-          <pre class="m-0" [innerHTML]="jqlQuery() | highlightJql"></pre>
-        </h5>
-      </div>   
+    <div class="alert alert-success w-100">
+      <h5 class="m-0">
+        <pre class="m-0" [innerHTML]="jqlQuery() | highlightJql"></pre>
+      </h5>
+    </div>
   </div>
 </form>
