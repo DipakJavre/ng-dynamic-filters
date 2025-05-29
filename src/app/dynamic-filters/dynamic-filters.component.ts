@@ -29,7 +29,7 @@ import {
   SupportedDataType,
 } from './utils/common-utilities';
 import { NgFor, NgIf } from '@angular/common';
-import { AddNewFilterComponent } from './add-new-filter/add-new-filter.component';
+import { AddNewFilterComponent } from './components/add-new-filter/add-new-filter.component';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { ValueComponentMap } from './value-components/value-component-map';
 import { QueryBuilderService } from './services/query-builder.service';
@@ -94,6 +94,10 @@ export class DynamicFiltersComponent implements OnInit, OnDestroy, OnChanges {
           }
         });
       });
+      setTimeout(() => {
+        console.log('filtersForm :', this.filtersForm);
+      }, 2000);
+      
   }
 
   ngOnChanges(changes: SimpleChanges): void {

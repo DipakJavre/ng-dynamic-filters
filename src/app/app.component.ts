@@ -18,7 +18,7 @@ import { menuList } from './dynamic-filters/utils/restaurants_records';
   providers: [FakeApiService],
 })
 export class AppComponent {
-  filterList: FilterDefinition[] = [
+  filterColumnList: FilterDefinition[] = [
     {
       field: 'name',
       label: 'Restaurant Name',
@@ -31,7 +31,15 @@ export class AppComponent {
       field: 'rating',
       label: 'Ratting',
       isVisibleInRow: true,
-      fieldInformation: 'Rating of the restaurant',
+      type: {
+        dataType: 'number',
+      },
+    },
+    {
+      field: 'price',
+      label: 'Price',
+      isVisibleInRow: true,
+      fieldInformation: 'Filter records based on price range',
       type: {
         dataType: 'number',
       },
@@ -73,6 +81,7 @@ export class AppComponent {
       field: 'tags',
       label: 'Tags',
       isVisibleInRow: true,
+      fieldInformation: 'Filter records based on tags',
       type: {
         dataType: 'select',
         options: [
@@ -84,15 +93,7 @@ export class AppComponent {
           { value: 'gourmet', label: 'Gourmet' },
         ],
         isMultiple: true,
-      },
-    },
-    {
-      field: 'price',
-      label: 'Price',
-      isVisibleInRow: true,
-      fieldInformation: 'Filter records based on price range',
-      type: {
-        dataType: 'number',
+        allowSearch: false,
       },
     },
   ];
@@ -212,11 +213,11 @@ export class AppComponent {
 
   onSearchFactory(): (searchText: string, fieldKey: string) => void {
     return (searchText: string, fieldKey: string) => {
-      const field = this.filterList.find((f) => f.field === fieldKey);
+      const field = this.filterColumnList.find((f) => f.field === fieldKey);
       if (field) {
         field.type.options = this.filteredOptions(searchText);
         setTimeout(() => {
-          this.filterList = [...this.filterList];
+          this.filterColumnList = [...this.filterColumnList];
         }, 1000);
       }
     };

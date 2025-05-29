@@ -16,7 +16,8 @@ $active-color: white;
 $font-family: "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif;
 $font-size: 14px;
 
-.button-options, .all-filter-list {
+.button-options,
+.all-filter-list {
   position: absolute;
   top: 100%;
   left: 0;
@@ -28,24 +29,23 @@ $font-size: 14px;
   box-shadow: 0 4px 8px $box-shadow-color;
   border-radius: 4px;
   margin-top: 4px;
-  .clear-filters{
+  .clear-filters {
     margin-top: 20px;
     border-top: 1px solid $border-color;
     display: flex;
     justify-content: end;
-    p{
-      margin: 10px 0 0 0 ;
+    p {
+      margin: 10px 0 0 0;
       cursor: pointer;
       font-size: 13px;
       color: $primary-color;
-      font-weight: 500; 
-      &:hover{
+      font-weight: 500;
+      &:hover {
         font-weight: 600;
       }
     }
   }
 }
-
 
 .btn {
   background-color: $btn-bg-color;
@@ -70,7 +70,6 @@ $font-size: 14px;
   &:hover {
     background-color: $btn-hover-bg-color;
 
-
     &:disabled {
       background-color: $btn-disabled-bg-color;
       color: $btn-disabled-color;
@@ -79,11 +78,12 @@ $font-size: 14px;
   }
 }
 
-.add-btn, .filter-btn {
+.add-btn,
+.filter-btn {
   @extend .btn;
 }
 
-.add-btn{
+.add-btn {
   outline: none;
   border: none;
 }
@@ -121,7 +121,7 @@ $font-size: 14px;
   .custom-dropdown {
     position: relative;
     display: inline-block;
-    
+
     .dropdown-select {
       width: 100%;
       padding: 10px 15px;
@@ -215,7 +215,6 @@ $font-size: 14px;
   }
 }
 
-
 .info-icon {
   display: inline-block;
   position: relative;
@@ -227,7 +226,7 @@ $font-size: 14px;
     justify-content: center;
     width: 16px;
     height: 16px;
-    background-color: #0052cc; 
+    background-color: #0052cc;
     color: white;
     border-radius: 50%;
     font-weight: bold;
@@ -237,12 +236,30 @@ $font-size: 14px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     margin-left: 10px;
   }
-  
+
   .info-icon:hover .info-icon-circle {
     background-color: #003c8f;
   }
-  
+
   .info-icon:focus .info-icon-circle {
-    outline: 2px solid #ffab00; 
+    outline: 2px solid #ffab00;
+  }
+}
+
+.selected-filter-container {
+  select {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: transparent;
+    font-size: 14px;
+    color: $primary-color;
+    text-align: center;
+
+  }
+
+  .select:focus {
+    border-color: #007bff;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
   }
 }
