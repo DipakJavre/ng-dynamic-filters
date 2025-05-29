@@ -13,7 +13,7 @@
           <button class="close-icon" (click)="removeFilter(i)">&#10006;</button>
         </div>
 
-        <div *ngIf="openDropdownIndex === i" class="button-options">
+        <div *ngIf="openDropdownIndex() === i" class="button-options">
           <div class="operator">
             <label for="custom-dropdown" class="dropdown-label"
               >Select Operator</label
@@ -43,15 +43,15 @@
       <button type="button" class="add-btn" (click)="toggleAddDropdown()">
         &nbsp; &#x2b; Add
       </button>
-      <div class="all-filter-list" *ngIf="isAddDropdownOpen">
+      <div class="all-filter-list" *ngIf="isAddDropdownOpen()">
         <ng-template #addDropdownDynamicContainer></ng-template>
       </div>
     </div>
   </div>
-  <div class="mt-4" *ngIf="jqlQuery">
+  <div class="mt-4" *ngIf="jqlQuery()">
       <div class="alert alert-success w-100">
         <h5 class="m-0">
-          <pre class="m-0" [innerHTML]="jqlQuery | highlightJql"></pre>
+          <pre class="m-0" [innerHTML]="jqlQuery() | highlightJql"></pre>
         </h5>
       </div>   
   </div>

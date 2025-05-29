@@ -14,6 +14,7 @@ import {
   ViewChild,
   ViewChildren,
   ViewContainerRef,
+  signal,
 } from '@angular/core';
 import {
   FormArray,
@@ -31,10 +32,8 @@ import { NgFor, NgIf } from '@angular/common';
 import { AddNewFilterComponent } from './add-new-filter/add-new-filter.component';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { ValueComponentMap } from './value-components/value-component-map';
-
 import { QueryBuilderService } from './services/query-builder.service';
 import { HighlightJqlPipe } from './pipes/HighlightJqlPipe ';
-import { debounceTime } from 'rxjs';
 
 @Component({
   selector: 'lib-dynamic-filters',
@@ -56,14 +55,13 @@ export class DynamicFiltersComponent implements OnInit, OnDestroy, OnChanges {
   addDropdownDynamicContainer!: ViewContainerRef;
   addFilterDropdownComponentRef!: ComponentRef<any>;
 
-  openDropdownIndex: number = -1;
-  isAddDropdownOpen = false;
+  openDropdownIndex = signal<number>(-1);
+  isAddDropdownOpen = signal(false);
+  jqlQuery = signal('');
 
   filtersForm!: FormGroup;
 
   @Input() filterList: FilterDefinition[] = [];
-
-  jqlQuery: string = '';
 
   constructor(
     private fb: FormBuilder,
@@ -82,8 +80,8 @@ export class DynamicFiltersComponent implements OnInit, OnDestroy, OnChanges {
         Promise.resolve().then(() => {
           this.buildJQLQuery();
 
-          if (this.isAddDropdownOpen) {
-            this.isAddDropdownOpen = false;
+          if (this.isAddDropdownOpen()) {
+            this.isAddDropdownOpen.set(false);
             this.addDropdownDynamicContainer.clear();
           }
         });
@@ -116,9 +114,9 @@ export class DynamicFiltersComponent implements OnInit, OnDestroy, OnChanges {
   buildJQLQuery() {
     const filters: any[] = this.filtersForm.get('filters')?.value || [];
     if (filters.length) {
-      this.jqlQuery = this.queryBuilderService.buildJqlQuery(filters);
+      this.jqlQuery.set(this.queryBuilderService.buildJqlQuery(filters));
     } else {
-      this.jqlQuery = '';
+      this.jqlQuery.set('');
     }
   }
 
@@ -141,22 +139,23 @@ export class DynamicFiltersComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   toggleDropdown(index: number) {
-    if (this.isAddDropdownOpen) {
-      this.isAddDropdownOpen = false;
+    if (this.isAddDropdownOpen()) {
+      this.isAddDropdownOpen.set(false);
       this.addDropdownDynamicContainer.clear();
     }
 
-    this.openDropdownIndex = this.openDropdownIndex === index ? -1 : index;
+    const currentIndex = this.openDropdownIndex();
+    this.openDropdownIndex.set(currentIndex === index ? -1 : index);
 
-    if (this.openDropdownIndex === -1) return;
+    if (this.openDropdownIndex() === -1) return;
 
     const operatorValue = this.filters
-      .at(this.openDropdownIndex)
+      .at(this.openDropdownIndex())
       .get('operator')?.value;
 
     if (operatorValue) {
       setTimeout(() => {
-        this.loadValueComponentDefault(this.openDropdownIndex);
+        this.loadValueComponentDefault(this.openDropdownIndex());
       });
     }
   }
@@ -166,8 +165,8 @@ export class DynamicFiltersComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   toggleAddDropdown() {
-    this.isAddDropdownOpen = !this.isAddDropdownOpen;
-    this.openDropdownIndex = -1;
+    this.isAddDropdownOpen.set(!this.isAddDropdownOpen());
+    this.openDropdownIndex.set(-1);
     setTimeout(() => {
       this.loadFieldVisibilityComponent();
     });
@@ -189,8 +188,8 @@ export class DynamicFiltersComponent implements OnInit, OnDestroy, OnChanges {
     const target = event.target as HTMLElement;
 
     if (!this.elementRef.nativeElement.contains(target)) {
-      this.openDropdownIndex = -1;
-      this.isAddDropdownOpen = false;
+      this.openDropdownIndex.set(-1);
+      this.isAddDropdownOpen.set(false);
     }
   }
 
@@ -212,8 +211,8 @@ export class DynamicFiltersComponent implements OnInit, OnDestroy, OnChanges {
         isVisibleInRow: false,
       });
     }
-    if (this.openDropdownIndex === i) {
-      this.openDropdownIndex = -1;
+    if (this.openDropdownIndex() === i) {
+      this.openDropdownIndex.set(-1);
     }
   }
 
@@ -228,7 +227,7 @@ export class DynamicFiltersComponent implements OnInit, OnDestroy, OnChanges {
       this.addFilterDropdownComponentRef.destroy();
       this.addFilterDropdownComponentRef = null as any;
     }
-    this.isAddDropdownOpen = false;
+    this.isAddDropdownOpen.set(false);
   }
 
   private getFieldType(fieldName: string): string {
@@ -254,10 +253,10 @@ export class DynamicFiltersComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   updateValueComponentOptions() {
-    if (!this.valueComponentRef || this.openDropdownIndex < 0) return;
+    if (!this.valueComponentRef || this.openDropdownIndex() < 0) return;
 
     const { fieldName, fieldType } = this.getComponentInfo(
-      this.openDropdownIndex
+      this.openDropdownIndex()
     );
     if (fieldType === 'select' || fieldType === 'multiSelect') {
       const options = this.getOptionsForField(fieldName);
