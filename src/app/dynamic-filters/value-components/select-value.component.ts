@@ -73,4 +73,8 @@ export class SelectValueComponent implements OnInit {
 
     control.setValue(control.value === value ? null : value);
   }
+
+  updateOptions(options: OptionsDefinition[]) {
+    this.filteredOptions = [...options];
+  }
 }

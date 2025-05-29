@@ -4,13 +4,16 @@ import { RouterOutlet } from '@angular/router';
 import { Restaurant } from './models/restaurant.model';
 import { DynamicFiltersComponent } from './dynamic-filters/dynamic-filters.component';
 import { FilterDefinition } from './dynamic-filters/utils/common-utilities';
+import { FakeApiService } from './fake-api.service';
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet,CommonModule,DynamicFiltersComponent],
+  imports: [RouterOutlet, CommonModule, DynamicFiltersComponent],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.scss'
+  styleUrl: './app.component.scss',
+  providers: [FakeApiService],
 })
 export class AppComponent {
+  constructor(private fakeAPIService: FakeApiService) {}
 
   filterList: FilterDefinition[] = [
     {
@@ -44,152 +47,163 @@ export class AppComponent {
       },
     },
     {
-      field:'tags',
+      field: 'menu',
+      label: 'Menu',
+      isVisibleInRow: true,
+      type: {
+        dataType: 'multiSelect',
+        options: [],
+        allowSearch: true,
+        onSearch: this.onSearchFactory(),
+      },
+    },
+    {
+      field: 'tags',
       label: 'Tags',
       isVisibleInRow: true,
       type: {
-        dataType:'multiSelect',
+        dataType: 'multiSelect',
         options: [
           { value: 'coffee', label: 'Coffee' },
           { value: 'dessert', label: 'Dessert' },
           { value: 'quiet', label: 'Quiet' },
           { value: 'premium', label: 'Premium' },
           { value: 'fine-dine', label: 'Fine Dine' },
-          { value: 'gourmet', label: 'Gourmet' }
-        ]
-      }
-    }
-  
+          { value: 'gourmet', label: 'Gourmet' },
+        ],
+      },
+    },
   ];
 
-  restaurants: Restaurant[] =[
-      {
-    "_id": "1",
-    "name": "Restaurant 1",
-    "city": "Chennai",
-    "rating": 4.2,
-    "cuisine": [
-      "North Indian",
-      "Mughlai"
-    ],
-    "priceRange": {
-      "min": 114,
-      "max": 1442
-    },
-    "features": {
-      "outdoorSeating": true,
-      "familyFriendly": true,
-      "liveMusic": true,
-      "wheelchairAccess": false
-    },
-    "tags": [
-      "coffee",
-      "dessert",
-      "quiet"
-    ],
-    "contact": {
-      "phone": "+91-8751098154",
-      "email": "contact71@restaurant1.com"
-    },
-    "location": {
-      "coordinates": [
-        18.9958,
-        78.3259
+  restaurants: Restaurant[] = [
+    {
+      _id: '1',
+      name: 'Restaurant 1',
+      city: 'Chennai',
+      rating: 4.2,
+      cuisine: ['North Indian', 'Mughlai'],
+      priceRange: {
+        min: 114,
+        max: 1442,
+      },
+      features: {
+        outdoorSeating: true,
+        familyFriendly: true,
+        liveMusic: true,
+        wheelchairAccess: false,
+      },
+      tags: ['coffee', 'dessert', 'quiet'],
+      contact: {
+        phone: '+91-8751098154',
+        email: 'contact71@restaurant1.com',
+      },
+      location: {
+        coordinates: [18.9958, 78.3259],
+        address: {
+          line1: '509, Main Road',
+          line2: null,
+          zipcode: '984394',
+        },
+      },
+      availableTables: null,
+      revenue: '6831356782',
+      menu: [
+        {
+          item: 'Rasam Rice',
+          price: 464,
+        },
+        {
+          item: 'Pasta Alfredo',
+          price: 478,
+        },
+        {
+          item: 'Tandoori Chicken',
+          price: 222,
+        },
+        {
+          item: 'Masala Dosa',
+          price: 214,
+        },
       ],
-      "address": {
-        "line1": "509, Main Road",
-        "line2": null,
-        "zipcode": "984394"
-      }
+      createdAt: '2025-03-14T00:00:00',
+      updatedAt: '2025-01-14T00:00:00',
     },
-    "availableTables": null,
-    "revenue": "6831356782",
-    "menu": [
-      {
-        "item": "Rasam Rice",
-        "price": 464
+    {
+      _id: '2',
+      name: 'Restaurant 2',
+      city: 'Hyderabad',
+      rating: 3.6,
+      cuisine: ['Continental', 'Italian'],
+      priceRange: {
+        min: 101,
+        max: 973,
       },
-      {
-        "item": "Pasta Alfredo",
-        "price": 478
+      features: {
+        outdoorSeating: true,
+        familyFriendly: false,
+        liveMusic: true,
+        wheelchairAccess: true,
       },
-      {
-        "item": "Tandoori Chicken",
-        "price": 222
+      tags: ['premium', 'fine-dine', 'gourmet'],
+      contact: {
+        phone: '+91-8992513196',
+        email: 'contact70@restaurant2.com',
       },
-      {
-        "item": "Masala Dosa",
-        "price": 214
-      }
-    ],
-    "createdAt": "2025-03-14T00:00:00",
-    "updatedAt": "2025-01-14T00:00:00"
-  },
-  {
-    "_id": "2",
-    "name": "Restaurant 2",
-    "city": "Hyderabad",
-    "rating": 3.6,
-    "cuisine": [
-      "Continental",
-      "Italian"
-    ],
-    "priceRange": {
-      "min": 101,
-      "max": 973
-    },
-    "features": {
-      "outdoorSeating": true,
-      "familyFriendly": false,
-      "liveMusic": true,
-      "wheelchairAccess": true
-    },
-    "tags": [
-      "premium",
-      "fine-dine",
-      "gourmet"
-    ],
-    "contact": {
-      "phone": "+91-8992513196",
-      "email": "contact70@restaurant2.com"
-    },
-    "location": {
-      "coordinates": [
-        26.1228,
-        82.1126
+      location: {
+        coordinates: [26.1228, 82.1126],
+        address: {
+          line1: '446, Main Road',
+          line2: null,
+          zipcode: '268035',
+        },
+      },
+      availableTables: null,
+      revenue: '2626177909',
+      menu: [
+        {
+          item: 'Tandoori Chicken',
+          price: 339,
+        },
+        {
+          item: 'Pasta Alfredo',
+          price: 172,
+        },
+        {
+          item: 'Rasam Rice',
+          price: 184,
+        },
+        {
+          item: 'Naan',
+          price: 342,
+        },
+        {
+          item: 'Chow Mein',
+          price: 394,
+        },
       ],
-      "address": {
-        "line1": "446, Main Road",
-        "line2": null,
-        "zipcode": "268035"
-      }
+      createdAt: '2024-03-27T00:00:00',
+      updatedAt: '2024-03-02T00:00:00',
     },
-    "availableTables": null,
-    "revenue": "2626177909",
-    "menu": [
-      {
-        "item": "Tandoori Chicken",
-        "price": 339
-      },
-      {
-        "item": "Pasta Alfredo",
-        "price": 172
-      },
-      {
-        "item": "Rasam Rice",
-        "price": 184
-      },
-      {
-        "item": "Naan",
-        "price": 342
-      },
-      {
-        "item": "Chow Mein",
-        "price": 394
+  ];
+
+  onSearchFactory(): (searchText: string, fieldKey: string) => void {
+    return (searchText: string, fieldKey: string) => {
+      const field = this.filterList.find((f) => f.field === fieldKey);
+      if (field) {
+        field.type.options = [
+          {
+            label: 'Option 1',
+            value: 'option1',
+          },
+        ];
+        this.filterList = [...this.filterList];
       }
-    ],
-    "createdAt": "2024-03-27T00:00:00",
-    "updatedAt": "2024-03-02T00:00:00"
-  },
-  ]
+    };
+  }
+
+  async fetchOptions() {
+    this.fakeAPIService.getMenuItems().subscribe((data) => {
+      console.log(data);
+    });
+  }
 }

@@ -1,14 +1,15 @@
 import {
-  AfterViewInit,
   ChangeDetectorRef,
   Component,
   ComponentRef,
   ElementRef,
   HostListener,
   Input,
+  OnChanges,
   OnDestroy,
   OnInit,
   QueryList,
+  SimpleChanges,
   Type,
   ViewChild,
   ViewChildren,
@@ -43,9 +44,10 @@ import { debounceTime } from 'rxjs';
   styleUrl: './dynamic-filters.component.scss',
   providers: [QueryBuilderService],
 })
-export class DynamicFiltersComponent implements OnInit, OnDestroy {
+export class DynamicFiltersComponent implements OnInit, OnDestroy, OnChanges {
   @ViewChild('valueInputContainer', { read: ViewContainerRef })
   valueInputContainer!: ViewContainerRef;
+  valueComponentRef!: ComponentRef<any>;
 
   @ViewChildren('dropdownMenu') dropdownMenus!: QueryList<ElementRef>;
   @ViewChild('addDropdownWrapper', { static: false })
@@ -58,6 +60,7 @@ export class DynamicFiltersComponent implements OnInit, OnDestroy {
   isAddDropdownOpen = false;
 
   filtersForm!: FormGroup;
+
   @Input() filterList: FilterDefinition[] = [];
 
   jqlQuery: string = '';
@@ -86,12 +89,36 @@ export class DynamicFiltersComponent implements OnInit, OnDestroy {
         });
       });
   }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['filterList'] && changes['filterList'].currentValue) {
+      this.updateValueComponentOptions();
+    }
+  }
+
+  syncFilterOptions(): void {
+    this.filters.controls.forEach((ctrl) => {
+      const field = ctrl.get('field')?.value;
+      const newFieldDef = this.filterList.find((f) => f.field === field);
+      if (newFieldDef) {
+        const value = ctrl.get('value')?.value;
+        const isMulti = newFieldDef.type.dataType === 'multiSelect';
+        if (isMulti && !Array.isArray(value)) {
+          ctrl.get('value')?.setValue([]);
+        }
+        if (!isMulti && value === null) {
+          ctrl.get('value')?.setValue(null);
+        }
+      }
+    });
+  }
+
   buildJQLQuery() {
     const filters: any[] = this.filtersForm.get('filters')?.value || [];
     if (filters.length) {
       this.jqlQuery = this.queryBuilderService.buildJqlQuery(filters);
     } else {
-      this.jqlQuery = ''; 
+      this.jqlQuery = '';
     }
   }
 
@@ -215,20 +242,50 @@ export class DynamicFiltersComponent implements OnInit, OnDestroy {
   }
 
   loadValueComponent(index: number) {
+    const { fieldName, fieldType, componentType } =
+      this.getComponentInfo(index);
+    if (!componentType || !this.valueInputContainer) return;
+
+    this.valueInputContainer.clear();
+    this.valueComponentRef =
+      this.valueInputContainer.createComponent(componentType);
+    this.setCommonComponentInputs(index, fieldName, fieldType);
+    this.cdr.markForCheck();
+  }
+
+  updateValueComponentOptions() {
+    if (!this.valueComponentRef || this.openDropdownIndex < 0) return;
+
+    const { fieldName, fieldType } = this.getComponentInfo(
+      this.openDropdownIndex
+    );
+    if (fieldType === 'select' || fieldType === 'multiSelect') {
+      const options = this.getOptionsForField(fieldName);
+      this.valueComponentRef.instance.updateOptions([...options]);
+      this.valueComponentRef.changeDetectorRef.markForCheck();
+    }
+  }
+
+  private getComponentInfo(index: number) {
     const fieldName = this.filters.at(index).get('field')?.value;
     const fieldType = this.getFieldType(fieldName) as SupportedDataType;
     const componentType = ValueComponentMap[fieldType];
+    return { fieldName, fieldType, componentType };
+  }
 
-    if (!componentType) return;
+  private setCommonComponentInputs(
+    index: number,
+    fieldName: string,
+    fieldType: SupportedDataType
+  ) {
+    const instance = this.valueComponentRef.instance;
+    instance.formGroup = this.filters.at(index);
 
-    if (this.valueInputContainer) {
-      this.valueInputContainer.clear();
-      const compRef = this.valueInputContainer.createComponent(componentType);
-      compRef.instance.formGroup = this.filters.at(index);
-      if (fieldType === 'select' || fieldType === 'multiSelect') {
-        const options = this.getOptionsForField(fieldName);
-        compRef.instance.options = options;
-      }
+    if (fieldType === 'select' || fieldType === 'multiSelect') {
+      instance.options = [...this.getOptionsForField(fieldName)];
+      instance.allowSearch = this.filterList[index]?.type?.allowSearch;
+      instance.onSearch = this.filterList[index]?.type?.onSearch;
+      instance.field = this.filterList[index]?.field;
     }
   }
 

@@ -1,3 +1,4 @@
+import { Observable } from 'rxjs';
 
 export interface SelectOption {
   value: any;
@@ -8,10 +9,15 @@ export interface FilterDefinition {
   field: string;
   label: string;
   isVisibleInRow: boolean;
-  type:{
+  type: {
     dataType: SupportedDataType;
+    // options?: SelectOption[] | Promise<SelectOption[]> | Observable<SelectOption[]>;
     options?: SelectOption[];
-  }
+    allowSearch?: boolean;
+    searchOptions?: OptionsDefinition[];
+    searchText?: string;
+    onSearch?: (searchText: string, fieldKey: string) => void;
+  };
 }
 
 export type SupportedDataType =
@@ -93,7 +99,6 @@ export const operatorsMap = {
     { label: 'Every Match', value: 'every' },
   ],
 };
-
 
 // export const RESTAURANT_FILTER_FIELDS: QueryField[] = [
 //   {
