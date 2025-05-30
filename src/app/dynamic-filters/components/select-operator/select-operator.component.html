@@ -1,0 +1,17 @@
+<div class="operator" [formGroup]="formGroup">
+  <label for="custom-dropdown" class="dropdown-label">Select Operator</label>
+  <div class="custom-dropdown">
+    <ng-select
+      [items]="operators"
+      bindLabel="label"
+      bindValue="value"
+      formControlName="operator"
+      placeholder="Select an option"
+      [clearable]="true"
+      class="jira-ng-select"
+      placeholder="Select Operator"
+      [searchable]="false"
+      (ngModelChange)="onOperatorChanged.emit()"
+    ></ng-select>
+  </div>
+</div>

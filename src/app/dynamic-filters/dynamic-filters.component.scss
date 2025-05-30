@@ -1,20 +1,16 @@
-// Variables
-$btn-bg-color: #deebff;
-$btn-hover-bg-color: #b3d4ff;
-$btn-active-bg-color: #0052cc;
-$btn-text-color: #0052cc;
-$btn-disabled-bg-color: #e6f0ff;
-$btn-disabled-color: #999999;
-$border-color: #ccc;
-$box-shadow-color: rgba(0, 0, 0, 0.1);
-$dropdown-border-color: #dfe1e6;
-$dropdown-focus-border-color: #2684ff;
-$dropdown-shadow-color: rgba(38, 132, 255, 0.2);
-$icon-color: #5e6c84;
-$primary-color: #0052cc;
-$active-color: white;
-$font-family: "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif;
+$font-family: 'Poppins', sans-serif;
 $font-size: 14px;
+$color-background: #ffffff;
+$color-border: #dfe1e6;
+$color-primary: #0052cc;
+$color-primary-hover: #0747a6;
+$color-neutral: #172b4d;
+$color-muted: #6b778c;
+$color-accent: #deebff;
+$color-accent-hover: #b3d4ff;
+$color-selected: #e9f2ff;
+$color-shadow: rgba(9, 30, 66, 0.15);
+
 
 .button-options,
 .all-filter-list {
@@ -22,24 +18,27 @@ $font-size: 14px;
   top: 100%;
   left: 0;
   z-index: 1000;
-  background: white;
-  border: 1px solid $border-color;
+  background: $color-background;
+  border: 1px solid $color-border;
   padding: 15px;
   min-width: 300px;
-  box-shadow: 0 4px 8px $box-shadow-color;
+  box-shadow: 0 4px 8px $color-shadow;
   border-radius: 4px;
   margin-top: 4px;
+
   .clear-filters {
     margin-top: 20px;
-    border-top: 1px solid $border-color;
+    border-top: 1px solid $color-border;
     display: flex;
     justify-content: end;
+
     p {
       margin: 10px 0 0 0;
       cursor: pointer;
       font-size: 13px;
-      color: $primary-color;
+      color: $color-primary;
       font-weight: 500;
+
       &:hover {
         font-weight: 600;
       }
@@ -48,8 +47,8 @@ $font-size: 14px;
 }
 
 .btn {
-  background-color: $btn-bg-color;
-  color: $btn-text-color;
+  background-color: $color-accent;
+  color: $color-primary;
   border: none;
   border-radius: 3px;
   padding: 8px 16px;
@@ -63,27 +62,24 @@ $font-size: 14px;
   justify-content: center;
 
   &.active {
-    background-color: $btn-active-bg-color;
-    color: $active-color;
+    background-color: $color-primary;
+    color: $color-background;
   }
 
   &:hover {
-    background-color: $btn-hover-bg-color;
+    background-color: $color-accent-hover;
+  }
 
-    &:disabled {
-      background-color: $btn-disabled-bg-color;
-      color: $btn-disabled-color;
-      cursor: not-allowed;
-    }
+  &:disabled {
+    background-color: $color-border;
+    color: $color-muted;
+    cursor: not-allowed;
   }
 }
 
 .add-btn,
 .filter-btn {
   @extend .btn;
-}
-
-.add-btn {
   outline: none;
   border: none;
 }
@@ -96,76 +92,26 @@ $font-size: 14px;
   border-radius: 50%;
   display: flex;
   justify-content: center;
-  color: white;
-  outline: none;
-  border: none;
-  background-color: $primary-color;
-  font-size: 8px;
   align-items: center;
-  padding-top: 2.5px !important;
+  color: $color-background;
+  background-color: $color-primary;
+  font-size: 8px;
   text-align: center;
+  padding-top: 2.5px !important;
 }
 
-.operator {
-  display: flex;
-  flex-direction: column;
-  font-family: $font-family;
-  font-size: $font-size;
-  color: #172b4d;
-
-  .dropdown-label {
-    margin-bottom: 8px;
-    font-weight: 500;
-  }
-
-  .custom-dropdown {
-    position: relative;
-    display: inline-block;
-
-    .dropdown-select {
-      width: 100%;
-      padding: 10px 15px;
-      border: 1px solid $dropdown-border-color;
-      border-radius: 3px;
-      background-color: #ffffff;
-      appearance: none;
-      -webkit-appearance: none;
-      -moz-appearance: none;
-      font-size: $font-size;
-      line-height: 1.5;
-      color: #172b4d;
-      cursor: pointer;
-
-      &:focus {
-        outline: none;
-        border-color: $dropdown-focus-border-color;
-        box-shadow: 0 0 0 2px $dropdown-shadow-color;
-      }
-    }
-
-    .dropdown-icon {
-      position: absolute;
-      right: 12px;
-      top: 50%;
-      transform: translateY(-50%);
-      pointer-events: none;
-      font-size: 12px;
-      color: $icon-color;
-    }
-  }
-}
 
 ::ng-deep .jira-ng-select {
   width: 100%;
-  border: 1px solid #dfe1e6;
+  border: 1px solid $color-border;
   border-radius: 3px;
-  background-color: #ffffff;
-  font-size: 14px;
-  color: #172b4d;
+  background-color: $color-background;
+  font-size: $font-size;
+  color: $color-neutral;
 
   .ng-select-container {
     border: none;
-    box-shadow: inset 0 0 0 1px #dfe1e6;
+    box-shadow: inset 0 0 0 1px $color-border;
     border-radius: 3px;
     padding: 4px 8px;
     min-height: 36px;
@@ -174,11 +120,11 @@ $font-size: 14px;
   }
 
   .ng-select-container:hover {
-    box-shadow: inset 0 0 0 1px #b3bac5;
+    box-shadow: inset 0 0 0 1px $color-muted;
   }
 
   .ng-value {
-    background: #f4f5f7;
+    background: $color-accent;
     border-radius: 2px;
     padding: 2px 6px;
     margin-right: 4px;
@@ -186,13 +132,13 @@ $font-size: 14px;
   }
 
   .ng-arrow-wrapper {
-    color: #6b778c;
+    color: $color-muted;
   }
 
   .ng-dropdown-panel {
-    border: 1px solid #dfe1e6;
+    border: 1px solid $color-border;
     border-radius: 4px;
-    box-shadow: 0 4px 8px rgba(9, 30, 66, 0.15);
+    box-shadow: 0 4px 8px $color-shadow;
     margin-top: 4px;
     font-size: 14px;
   }
@@ -200,18 +146,18 @@ $font-size: 14px;
   .ng-option {
     padding: 8px 12px;
     cursor: pointer;
-  }
 
-  .ng-option:hover {
-    background-color: #f4f5f7;
-  }
+    &:hover {
+      background-color: $color-accent;
+    }
 
-  .ng-option-selected {
-    background-color: #e9f2ff;
-  }
+    &.ng-option-selected {
+      background-color: $color-selected;
+    }
 
-  .ng-option-marked {
-    background-color: #deebff;
+    &.ng-option-marked {
+      background-color: $color-accent-hover;
+    }
   }
 }
 
@@ -220,46 +166,38 @@ $font-size: 14px;
   position: relative;
   cursor: pointer;
   font-family: Arial, sans-serif;
+
   .info-icon-circle {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 16px;
-    height: 16px;
-    background-color: #0052cc;
-    color: white;
+    width: 18px;
+    height: 18px;
+    background-color: $color-primary;
+    color: $color-background;
     border-radius: 50%;
     font-weight: bold;
-    font-size: 12px;
+    font-size: 14px;
     text-align: center;
     line-height: 1;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 4px $color-shadow;
     margin-left: 10px;
-  }
-
-  .info-icon:hover .info-icon-circle {
-    background-color: #003c8f;
-  }
-
-  .info-icon:focus .info-icon-circle {
-    outline: 2px solid #ffab00;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
   }
 }
 
 .selected-filter-container {
   select {
-    border: 1px solid #ccc;
+    border: 1px solid $color-border;
     border-radius: 4px;
     background-color: transparent;
     font-size: 14px;
-    color: $primary-color;
+    color: $color-primary;
     text-align: center;
 
-  }
-
-  .select:focus {
-    border-color: #007bff;
-    outline: none;
-    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+    &:focus {
+      border-color: $color-primary;
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(0, 82, 204, 0.25);
+    }
   }
 }

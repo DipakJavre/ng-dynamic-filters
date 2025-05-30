@@ -35,6 +35,9 @@ import { ValueComponentMap } from './value-components/value-component-map';
 import { QueryBuilderService } from './services/query-builder.service';
 import { HighlightJqlPipe } from './pipes/HighlightJqlPipe ';
 import { OperatorsPipe } from './pipes/operator.pipe';
+import { SelectOperatorComponent } from './components/select-operator/select-operator.component';
+import { UnsubscribeBase } from './services/unsubscribe-subscription';
+import { takeUntil } from 'rxjs';
 
 @Component({
   selector: 'lib-dynamic-filters',
@@ -46,12 +49,16 @@ import { OperatorsPipe } from './pipes/operator.pipe';
     NgSelectModule,
     HighlightJqlPipe,
     OperatorsPipe,
+    SelectOperatorComponent,
   ],
   templateUrl: './dynamic-filters.component.html',
   styleUrl: './dynamic-filters.component.scss',
   providers: [QueryBuilderService],
 })
-export class DynamicFiltersComponent implements OnInit, OnDestroy, OnChanges {
+export class DynamicFiltersComponent
+  extends UnsubscribeBase
+  implements OnInit, OnDestroy, OnChanges
+{
   @ViewChild('valueInputContainer', { read: ViewContainerRef })
   valueInputContainer!: ViewContainerRef;
   valueComponentRef!: ComponentRef<any>;
@@ -78,13 +85,15 @@ export class DynamicFiltersComponent implements OnInit, OnDestroy, OnChanges {
     private elementRef: ElementRef,
     private cdr: ChangeDetectorRef,
     private queryBuilderService: QueryBuilderService
-  ) {}
+  ) {
+    super();
+  }
 
   ngOnInit(): void {
     this.initializeFiltersForm();
     this.filtersForm
       .get('filters')
-      ?.valueChanges.pipe()
+      ?.valueChanges.pipe(takeUntil(this.destroy$))
       .subscribe(() => {
         Promise.resolve().then(() => {
           this.buildJQLQuery();
@@ -94,10 +103,6 @@ export class DynamicFiltersComponent implements OnInit, OnDestroy, OnChanges {
           }
         });
       });
-      setTimeout(() => {
-        console.log('filtersForm :', this.filtersForm);
-      }, 2000);
-      
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -106,24 +111,7 @@ export class DynamicFiltersComponent implements OnInit, OnDestroy, OnChanges {
     }
   }
 
-  syncFilterOptions(): void {
-    this.filters.controls.forEach((ctrl) => {
-      const field = ctrl.get('field')?.value;
-      const newFieldDef = this.filterList.find((f) => f.field === field);
-      if (newFieldDef) {
-        const value = ctrl.get('value')?.value;
-        const isMulti = newFieldDef.type.isMultiple;
-        if (isMulti && !Array.isArray(value)) {
-          ctrl.get('value')?.setValue([]);
-        }
-        if (!isMulti && value === null) {
-          ctrl.get('value')?.setValue(null);
-        }
-      }
-    });
-  }
-
-  buildJQLQuery() {
+  private buildJQLQuery() {
     const filters: FilterResult[] = this.filtersForm.get('filters')?.value;
     if (filters.length) {
       this.jqlQuery.set(this.queryBuilderService.buildJqlQuery(filters));
@@ -145,7 +133,7 @@ export class DynamicFiltersComponent implements OnInit, OnDestroy, OnChanges {
     );
   }
 
-  initializeFiltersForm() {
+  private initializeFiltersForm() {
     this.filtersForm = this.fb.group({
       filters: this.fb.array([]),
     });
@@ -166,7 +154,7 @@ export class DynamicFiltersComponent implements OnInit, OnDestroy, OnChanges {
     });
   }
 
-  mapFieldInformation(field: FilterDefinition) {
+  private mapFieldInformation(field: FilterDefinition) {
     this.fieldInfoMap.set(field.field, field.fieldInformation || '');
   }
 
@@ -192,7 +180,7 @@ export class DynamicFiltersComponent implements OnInit, OnDestroy, OnChanges {
     }
   }
 
-  loadValueComponentDefault(index: number) {
+  private loadValueComponentDefault(index: number) {
     this.loadValueComponent(index);
   }
 
@@ -200,41 +188,39 @@ export class DynamicFiltersComponent implements OnInit, OnDestroy, OnChanges {
     this.isAddDropdownOpen.set(!this.isAddDropdownOpen());
     this.openDropdownIndex.set(-1);
     setTimeout(() => {
-      this.loadFieldVisibilityComponent();
+      this.loadAddNewFilterDropdownComponent();
     });
   }
 
-  loadFieldVisibilityComponent() {
+  private loadAddNewFilterDropdownComponent() {
     this.addDropdownDynamicContainer.clear();
 
     const compRef = this.addDropdownDynamicContainer.createComponent(
       AddNewFilterComponent
     );
     compRef.instance.filters = this.filters;
-
     this.addFilterDropdownComponentRef = compRef;
   }
 
   @HostListener('document:click', ['$event'])
   onClickOutside(event: MouseEvent) {
     const target = event.target as HTMLElement;
-
     if (!this.elementRef.nativeElement.contains(target)) {
       this.openDropdownIndex.set(-1);
       this.isAddDropdownOpen.set(false);
     }
   }
 
-  get filters(): FormArray {
-    return this.filtersForm.get('filters') as FormArray;
+  get filters(): FormArray<FormGroup> {
+    return this.filtersForm.get('filters') as FormArray<FormGroup>;
   }
 
   clearFilters(i: number) {
     const filterGroup = this.filters.at(i);
     if (filterGroup) {
       const fieldName = filterGroup.get('field')?.value;
-      const isMultipleType =
-        this.filterList.find((f) => f.field === fieldName)?.type.isMultiple
+      const isMultipleType = this.filterList.find((f) => f.field === fieldName)
+        ?.type.isMultiple;
 
       filterGroup.patchValue({
         operator: null,
@@ -243,7 +229,7 @@ export class DynamicFiltersComponent implements OnInit, OnDestroy, OnChanges {
     }
   }
 
-  destroyAddFilterDropdown() {
+  private destroyAddFilterDropdown() {
     if (this.addFilterDropdownComponentRef) {
       this.addFilterDropdownComponentRef.destroy();
       this.addFilterDropdownComponentRef = null as any;
@@ -261,22 +247,22 @@ export class DynamicFiltersComponent implements OnInit, OnDestroy, OnChanges {
     setTimeout(() => this.loadValueComponent(index));
   }
 
-  loadValueComponent(index: number) {
+  private loadValueComponent(index: number) {
     const { fieldName, fieldType, componentType } =
-      this.getComponentInfo(index);
+      this.getValueComponentType(index);
     if (!componentType || !this.valueInputContainer) return;
 
     this.valueInputContainer.clear();
     this.valueComponentRef =
       this.valueInputContainer.createComponent(componentType);
-    this.setCommonComponentInputs(index, fieldName, fieldType);
+    this.setValueComponentInputs(index, fieldName, fieldType);
     this.cdr.markForCheck();
   }
 
-  updateValueComponentOptions() {
+  private updateValueComponentOptions() {
     if (!this.valueComponentRef || this.openDropdownIndex() < 0) return;
 
-    const { fieldName, fieldType } = this.getComponentInfo(
+    const { fieldName, fieldType } = this.getValueComponentType(
       this.openDropdownIndex()
     );
     if (fieldType === 'select') {
@@ -286,14 +272,14 @@ export class DynamicFiltersComponent implements OnInit, OnDestroy, OnChanges {
     }
   }
 
-  private getComponentInfo(index: number) {
+  private getValueComponentType(index: number) {
     const fieldName = this.filters.at(index).get('field')?.value;
     const fieldType = this.getFieldType(fieldName) as SupportedDataType;
     const componentType = ValueComponentMap[fieldType];
     return { fieldName, fieldType, componentType };
   }
 
-  private setCommonComponentInputs(
+  private setValueComponentInputs(
     index: number,
     fieldName: string,
     fieldType: SupportedDataType
@@ -310,12 +296,15 @@ export class DynamicFiltersComponent implements OnInit, OnDestroy, OnChanges {
     }
   }
 
-  getOptionsForField(fieldName: string): { label: string; value: any }[] {
+  private getOptionsForField(
+    fieldName: string
+  ): { label: string; value: any }[] {
     const field = this.filterList.find((f) => f.field === fieldName);
     return field?.type?.options ?? [];
   }
 
-  ngOnDestroy() {
+  override ngOnDestroy() {
+    super.ngOnDestroy();
     this.destroyAddFilterDropdown();
   }
 }

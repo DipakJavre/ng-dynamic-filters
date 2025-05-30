@@ -8,7 +8,8 @@ import {
 import { CommonModule } from '@angular/common';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { SelectOption } from '../utils/common-utilities';
-import { debounceTime, filter } from 'rxjs/operators';
+import { debounceTime, filter, takeUntil } from 'rxjs/operators';
+import { UnsubscribeBase } from '../services/unsubscribe-subscription';
 
 @Component({
   standalone: true,
@@ -53,7 +54,7 @@ import { debounceTime, filter } from 'rxjs/operators';
     </div>
   `,
 })
-export class SelectValueComponent implements OnInit {
+export class SelectValueComponent extends UnsubscribeBase implements OnInit {
   @Input() formGroup!: FormGroup;
   @Input() options: SelectOption[] = [];
   @Input() allowSearch: boolean = false;
@@ -65,7 +66,9 @@ export class SelectValueComponent implements OnInit {
   searchControl = new FormControl('');
   filteredOptions: SelectOption[] = [];
 
-  constructor(private cdr: ChangeDetectorRef) {}
+  constructor(private cdr: ChangeDetectorRef) {
+    super();
+  }
 
   ngOnInit(): void {
     const control = this.formGroup.get('value');
@@ -86,7 +89,8 @@ export class SelectValueComponent implements OnInit {
     this.searchControl.valueChanges
       .pipe(
         debounceTime(500),
-        filter((val) => val !== null)
+        filter((val) => val !== null),
+        takeUntil(this.destroy$)
       )
       .subscribe((term) => {
         this.filterOptions(term || '');

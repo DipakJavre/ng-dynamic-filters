@@ -3,9 +3,11 @@ import {
   FormGroup,
   ReactiveFormsModule,
   FormControl,
-  Validators
+  Validators,
 } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { UnsubscribeBase } from '../services/unsubscribe-subscription';
+import { takeUntil } from 'rxjs';
 
 @Component({
   standalone: true,
@@ -33,7 +35,11 @@ import { CommonModule } from '@angular/common';
             type="number"
             class="field-input w-100"
             [formControl]="minControl"
-            [ngClass]="{ 'input-error': showValidationError || minControl.invalid && minControl.touched }"
+            [ngClass]="{
+              'input-error':
+                showValidationError ||
+                (minControl.invalid && minControl.touched)
+            }"
             placeholder="Min"
           />
         </div>
@@ -46,21 +52,24 @@ import { CommonModule } from '@angular/common';
             class="field-input w-100"
             [formControl]="maxControl"
             [disabled]="minControl.invalid"
-            [ngClass]="{ 'input-error': showValidationError || maxControl.invalid && maxControl.touched }"
+            [ngClass]="{
+              'input-error':
+                showValidationError ||
+                (maxControl.invalid && maxControl.touched)
+            }"
             placeholder="Max"
           />
         </div>
       </div>
 
-      <!-- Error Message -->
       <div class="text-danger mt-1" *ngIf="showValidationError">
         Min should not be greater than Max
       </div>
     </div>
   `,
-  imports: [CommonModule, ReactiveFormsModule]
+  imports: [CommonModule, ReactiveFormsModule],
 })
-export class NumberValueComponent implements OnInit {
+export class NumberValueComponent extends UnsubscribeBase implements OnInit {
   @Input() formGroup!: FormGroup;
 
   isBetween = false;
@@ -77,9 +86,13 @@ export class NumberValueComponent implements OnInit {
       this.minControl.setValue(currentValue?.min ?? null);
       this.maxControl.setValue(currentValue?.max ?? null);
 
-      // Subscribe to both fields and validate
-      this.minControl.valueChanges.subscribe(() => this.updateValue());
-      this.maxControl.valueChanges.subscribe(() => this.updateValue());
+      this.minControl.valueChanges
+        .pipe(takeUntil(this.destroy$))
+        .subscribe(() => this.updateValue());
+
+      this.maxControl.valueChanges
+        .pipe(takeUntil(this.destroy$))
+        .subscribe(() => this.updateValue());
     }
   }
 

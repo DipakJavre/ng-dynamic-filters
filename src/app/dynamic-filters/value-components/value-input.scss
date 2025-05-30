@@ -1,157 +1,170 @@
-/* value-inputs.scss */
+$font-family: 'Poppins', sans-serif;
+$font-size: 14px;
+$color-background: #ffffff;
+$color-border: #dfe1e6;
+$color-primary: #0052cc;
+$color-primary-hover: #0747a6;
+$color-neutral: #172b4d;
+$color-muted: #6b778c;
+$color-accent: #deebff;
+$color-accent-hover: #b3d4ff;
+$color-selected: #e9f2ff;
+$color-shadow: rgba(9, 30, 66, 0.15);
+$color-disabled-bg: #f4f5f7;
+$color-placeholder: #a5adba;
+$color-error: #de350b;
 
-/* Wrapper for all input components */
+
+
 .value-input-wrapper {
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  font-size: 14px;
-  color: #172b4d; /* dark blue text */
+  font-family: $font-family;
+  font-size: $font-size;
+  color: $color-neutral;
   width: 100%;
   max-width: 300px;
   margin-top: 8px;
-
   display: flex;
   flex-direction: column;
-}
-
-/* Labels */
-.value-input-wrapper label {
-  font-weight: 600;
-  margin-bottom: 4px;
-  color: #42526e; /* secondary text color */
-}
-
-/* Text, Number, Date input styles */
-.value-input-wrapper input[type='text'],
-.value-input-wrapper input[type='number'],
-.value-input-wrapper input[type='date'] {
-  padding: 8px 10px;
-  border: 1px solid #dfe1e6; /* light border */
-  border-radius: 3px;
-  background-color: #ffffff;
-  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-
-  &:focus {
-    border-color: #0052cc; /* primary blue */
-    box-shadow: 0 0 0 3px rgba(0, 82, 204, 0.2);
-    outline: none;
-  }
-}
-
-/* ng-select styles override */
-.value-input-wrapper ng-select {
-  width: 100%;
-  font-size: 14px;
-
-  .ng-select-container {
-    border: 1px solid #dfe1e6;
-    border-radius: 3px;
-    min-height: 36px;
-    padding: 2px 8px;
-    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-
-    &:focus-within,
-    &.ng-select-focused {
-      border-color: #0052cc;
-      box-shadow: 0 0 0 3px rgba(0, 82, 204, 0.2);
-    }
-  }
-
-  .ng-value {
-    color: #172b4d;
-  }
-
-  .ng-placeholder {
-    color: #a5adba;
-  }
-
-  .ng-clear-wrapper {
-    color: #6b778c;
-  }
-
-  .ng-dropdown-panel {
-    border-radius: 3px;
-    border: 1px solid #dfe1e6;
-    box-shadow: 0 4px 8px rgba(9, 30, 66, 0.25);
-    background-color: #fff;
-  }
-
-  .ng-option {
-    padding: 8px 12px;
-    font-size: 14px;
-    color: #172b4d;
-    cursor: pointer;
-
-    &.ng-option-highlighted {
-      background-color: #deebff;
-      color: #0747a6;
-    }
-
-    &.ng-option-selected {
-      background-color: #0052cc;
-      color: white;
-    }
-  }
-}
-
-/* Checkbox styling */
-.value-input-wrapper .checkbox-wrapper {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-top: 8px;
-
-  input[type='checkbox'] {
-    width: 16px;
-    height: 16px;
-    cursor: pointer;
-  }
 
   label {
-    cursor: pointer;
     font-weight: 600;
-    user-select: none;
-    color: #172b4d;
+    margin-bottom: 4px;
+    color: $color-muted;
+  }
+
+  input[type='text'],
+  input[type='number'],
+  input[type='date'] {
+    padding: 8px 10px;
+    border: 1px solid $color-border;
+    border-radius: 3px;
+    background-color: $color-background;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+
+    &:focus {
+      border-color: $color-primary;
+      box-shadow: 0 0 0 3px rgba($color-primary, 0.2);
+      outline: none;
+    }
+  }
+
+  input[disabled] {
+    background-color: $color-disabled-bg;
+    border-color: $color-border;
+    color: $color-placeholder;
+    cursor: not-allowed;
+  }
+
+  ng-select {
+    width: 100%;
+    font-size: $font-size;
+
+    .ng-select-container {
+      border: 1px solid $color-border;
+      border-radius: 3px;
+      min-height: 36px;
+      padding: 2px 8px;
+      transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+
+      &:focus-within,
+      &.ng-select-focused {
+        border-color: $color-primary;
+        box-shadow: 0 0 0 3px rgba($color-primary, 0.2);
+      }
+    }
+
+    .ng-value {
+      color: $color-neutral;
+    }
+
+    .ng-placeholder {
+      color: $color-placeholder;
+    }
+
+    .ng-clear-wrapper {
+      color: $color-muted;
+    }
+
+    .ng-dropdown-panel {
+      border-radius: 3px;
+      border: 1px solid $color-border;
+      box-shadow: 0 4px 8px $color-shadow;
+      background-color: $color-background;
+    }
+
+    .ng-option {
+      padding: 8px 12px;
+      font-size: $font-size;
+      color: $color-neutral;
+      cursor: pointer;
+
+      &.ng-option-highlighted {
+        background-color: $color-accent;
+        color: $color-primary-hover;
+      }
+
+      &.ng-option-selected {
+        background-color: $color-primary;
+        color: $color-background;
+      }
+    }
+
+    &[disabled] {
+      background-color: $color-disabled-bg;
+      border-color: $color-border;
+      color: $color-placeholder;
+      cursor: not-allowed;
+    }
+  }
+
+  .checkbox-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+
+    input[type='checkbox'] {
+      width: 16px;
+      height: 16px;
+      cursor: pointer;
+      accent-color: $color-primary;
+    }
+
+    label {
+      cursor: pointer;
+      font-weight: 600;
+      user-select: none;
+      color: $color-neutral;
+    }
+  }
+
+  .error-message {
+    margin-top: 4px;
+    color: $color-error;
+    font-size: 12px;
   }
 }
 
-/* Error message */
-.value-input-wrapper .error-message {
-  margin-top: 4px;
-  color: #de350b; /* error red */
-  font-size: 12px;
-}
-
-/* Disabled inputs */
-.value-input-wrapper input[disabled],
-.value-input-wrapper ng-select[disabled] {
-  background-color: #f4f5f7;
-  border-color: #dfe1e6;
-  color: #a5adba;
-  cursor: not-allowed;
-}
-
-/* Date input tweaks */
-.value-input-wrapper input[type='date'] {
-  padding-right: 30px; /* avoid calendar icon overlap */
-}
-
-/* Smooth transitions */
 .value-input-wrapper input,
 .value-input-wrapper ng-select {
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
+.value-input-wrapper input[type='date'] {
+  padding-right: 30px;
+}
+
 .search-box {
   width: 100%;
-  padding: 10px 10px;
+  padding: 10px;
   margin-bottom: 8px;
-  border: 1px solid #ccc;
+  border: 1px solid $color-border;
   border-radius: 6px;
-  font-size: 14px;
+  font-size: $font-size;
   transition: border-color 0.2s ease-in-out;
 
   &:focus {
-    border-color: #0052cc;
+    border-color: $color-primary;
     outline: none;
   }
 }
@@ -159,9 +172,9 @@
 .checkbox-list {
   max-height: 450px;
   overflow-y: auto;
-  border: 1px solid #ddd;
+  border: 1px solid $color-border;
   border-radius: 6px;
-  background-color: #f9f9f9;
+  background-color: $color-disabled-bg;
   padding: 10px;
   min-height: 100px;
 }
@@ -171,7 +184,7 @@
   padding: 4px 6px;
 
   &:hover {
-    background-color: #e5f0ff;
+    background-color: $color-accent-hover;
     border-radius: 4px;
   }
 }
@@ -180,15 +193,15 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 14px;
-  color: #172b4d;
+  font-size: $font-size;
+  color: $color-neutral;
   cursor: pointer;
 
   input[type='checkbox'] {
-    accent-color: #0052cc;
+    accent-color: $color-primary;
   }
 }
 
 .input-error {
-  border: 1px solid red !important;
+  border: 1px solid $color-error !important;
 }

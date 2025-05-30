@@ -10,7 +10,7 @@ export class HighlightJqlPipe implements PipeTransform {
 
     keywords.forEach(kw => {
       const pattern = new RegExp(`\\b${kw}\\b`, 'g');
-      result = result.replace(pattern, `<span class="jql-keyword">${kw}</span>`);
+      result = result.replace(pattern, `<span class="text-danger">${kw}</span>`);
     });
 
     return result;
