@@ -63,7 +63,6 @@ export class DynamicFiltersComponent
   valueInputContainer!: ViewContainerRef;
   valueComponentRef!: ComponentRef<any>;
 
-  @ViewChildren('dropdownMenu') dropdownMenus!: QueryList<ElementRef>;
   @ViewChild('addDropdownWrapper', { static: false })
   addDropdownWrapper!: ElementRef;
   @ViewChild('addDropdownDynamicContainer', { read: ViewContainerRef })
@@ -227,6 +226,8 @@ export class DynamicFiltersComponent
         value: isMultipleType ? [] : null,
       });
     }
+    this.openDropdownIndex.set(-1);
+  
   }
 
   private destroyAddFilterDropdown() {
