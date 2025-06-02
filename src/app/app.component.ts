@@ -26,7 +26,7 @@ export class AppComponent {
       label: 'Date',
       isVisibleInRow: true,
       type: {
-        dataType: 'date',
+        dataType: 'date'
       },
     },
     {

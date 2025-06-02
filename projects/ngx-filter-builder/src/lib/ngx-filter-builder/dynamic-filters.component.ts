@@ -295,6 +295,7 @@ export class DynamicFiltersComponent
       instance.field = this.filterList[index]?.field;
       instance.isMultiple = this.filterList[index].type?.isMultiple;
     }
+  
   }
 
   private getOptionsForField(

@@ -56,8 +56,9 @@ export const operatorsMap = {
     { label: 'Equals', value: '=' },
     { label: 'Not Equals', value: '!=' },
     { label: 'Before', value: '<' },
-    { label: 'On or Before', value: '<=' },
     { label: 'After', value: '>' },
+    { label: 'Between', value: 'between' },
+    { label: 'On or Before', value: '<=' },
     { label: 'On or After', value: '>=' },
   ],
   time: [
@@ -75,5 +76,5 @@ export const operatorsMap = {
   select: [
     { label: 'In', value: 'in' },
     { label: 'Not In', value: 'not in' },
-  ]
+  ],
 };
