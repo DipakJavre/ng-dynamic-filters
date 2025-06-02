@@ -31,13 +31,13 @@ import {
 import { NgFor, NgIf } from '@angular/common';
 import { AddNewFilterComponent } from './components/add-new-filter/add-new-filter.component';
 import { NgSelectModule } from '@ng-select/ng-select';
-import { ValueComponentMap } from './value-components/value-component-map';
 import { QueryBuilderService } from './services/query-builder.service';
 import { HighlightJqlPipe } from './pipes/HighlightJqlPipe ';
 import { OperatorsPipe } from './pipes/operator.pipe';
 import { SelectOperatorComponent } from './components/select-operator/select-operator.component';
 import { UnsubscribeBase } from './services/unsubscribe-subscription';
 import { takeUntil } from 'rxjs';
+import { ValueComponentMap } from './components/value-components/value-component-map';
 
 @Component({
   selector: 'lib-dynamic-filters',

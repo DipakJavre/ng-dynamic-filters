@@ -3,8 +3,7 @@ import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 
 import { FakeApiService } from './fake-api.service';
-import { FilterDefinition, FilterResult } from 'ngx-filter-builder';
-import { DynamicFiltersComponent } from '@ngx-filter';
+import { DynamicFiltersComponent, FilterDefinition, FilterResult } from '@ngx-filter';
 @Component({
   selector: 'app-root',
   imports: [RouterOutlet, CommonModule, DynamicFiltersComponent],
