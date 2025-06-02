@@ -1,12 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { DynamicFiltersComponent } from './dynamic-filters/dynamic-filters.component';
-import {
-  FilterDefinition,
-  FilterResult,
-} from './dynamic-filters/utils/common-utilities';
+
 import { FakeApiService } from './fake-api.service';
+import { FilterDefinition, FilterResult } from 'ngx-filter-builder';
+import { DynamicFiltersComponent } from '@ngx-filter';
 @Component({
   selector: 'app-root',
   imports: [RouterOutlet, CommonModule, DynamicFiltersComponent],
@@ -24,6 +22,14 @@ export class AppComponent {
         dataType: 'string',
       },
     },
+     {
+      field: 'date',
+      label: 'Date',
+      isVisibleInRow: true,
+      type: {
+        dataType: 'date',
+      },
+    },
     {
       field: 'rating',
       label: 'Ratting',
@@ -32,6 +38,7 @@ export class AppComponent {
         dataType: 'number',
       },
     },
+   
     {
       field: 'price',
       label: 'Price',

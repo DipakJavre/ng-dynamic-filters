@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Observable, timer } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { menuList } from './dynamic-filters/utils/restaurants_records';
-import { SelectOption } from './dynamic-filters/utils/common-utilities';
+import { menuList } from '../../projects/ngx-filter-builder/src/lib/ngx-filter-builder/utils/restaurants_records';
+import { SelectOption } from '../../projects/ngx-filter-builder/src/lib/ngx-filter-builder/utils/common-utilities';
 
 @Injectable()
 export class FakeApiService {

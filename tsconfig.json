@@ -9,6 +9,14 @@
     "noPropertyAccessFromIndexSignature": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
+    "paths": {
+      "ngx-filter-builder": [
+        "./dist/ngx-filter-builder",
+      ],
+      "@ngx-filter" : [ // This is the alias for the library for import locally
+        "./projects/ngx-filter-builder/src/public-api"
+      ]
+    },
     "skipLibCheck": true,
     "isolatedModules": true,
     "esModuleInterop": true,
