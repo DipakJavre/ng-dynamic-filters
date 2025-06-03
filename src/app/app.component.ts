@@ -3,7 +3,11 @@ import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 
 import { FakeApiService } from './fake-api.service';
-import { DynamicFiltersComponent, FilterDefinition, FilterResult } from '@ngx-filter';
+import {
+  DynamicFiltersComponent,
+  FilterDefinition,
+  FilterResult,
+} from '@ngx-filter';
 @Component({
   selector: 'app-root',
   imports: [RouterOutlet, CommonModule, DynamicFiltersComponent],
@@ -21,12 +25,21 @@ export class AppComponent {
         dataType: 'string',
       },
     },
-     {
+    {
+      field: 'isActive',
+      label: 'Active Restaurants',
+      isVisibleInRow: true,
+      type: {
+        dataType: 'boolean',
+      },
+    },
+    {
       field: 'date',
       label: 'Date',
       isVisibleInRow: true,
       type: {
-        dataType: 'date'
+        dataType: 'date',
+        dateFormat: 'dd-MM-yyyy',
       },
     },
     {
@@ -37,7 +50,7 @@ export class AppComponent {
         dataType: 'number',
       },
     },
-   
+
     {
       field: 'price',
       label: 'Price',

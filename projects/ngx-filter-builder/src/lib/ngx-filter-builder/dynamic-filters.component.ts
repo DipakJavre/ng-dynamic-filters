@@ -295,6 +295,10 @@ export class DynamicFiltersComponent
       instance.field = this.filterList[index]?.field;
       instance.isMultiple = this.filterList[index].type?.isMultiple;
     }
+
+    if(fieldType === 'date') {
+      instance.dateFormat = this.filterList[index]?.type?.dateFormat || 'dd/MM/yyyy';
+    }
   
   }
 

@@ -19,6 +19,7 @@ export interface FilterDefinition {
     allowSearch?: boolean;
     onSearch?: (searchText: string, fieldKey: string) => void;
     isMultiple?: boolean;
+    dateFormat?: SupportedDateFormats;
   };
 }
 
@@ -78,3 +79,12 @@ export const operatorsMap = {
     { label: 'Not In', value: 'not in' },
   ],
 };
+
+export type SupportedDateFormats =
+  | 'yyyy-MM-dd'
+  | 'dd/MM/yyyy'
+  | 'MM/dd/yyyy'
+  | 'MMMM dd, yyyy'
+  | 'dd MMM, yyyy'
+  | 'yyyy/MM/dd'
+  | 'dd-MM-yyyy';

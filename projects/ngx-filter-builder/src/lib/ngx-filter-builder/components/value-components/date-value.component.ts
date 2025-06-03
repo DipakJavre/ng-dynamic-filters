@@ -5,7 +5,7 @@ import {
   FormControl,
   Validators,
 } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { takeUntil } from 'rxjs';
 import { UnsubscribeBase } from '../../services/unsubscribe-subscription';
 
@@ -15,20 +15,20 @@ import { UnsubscribeBase } from '../../services/unsubscribe-subscription';
   styleUrl: './value-input.scss',
   template: `
     <div class="value-input-wrapper" [formGroup]="formGroup">
-      <!-- Single Date -->
+      
       <div *ngIf="!isBetween" class="form-group">
         <label class="field-label" for="date-input">Select Date</label>
         <input
           id="date-input"
           type="date"
           class="field-input w-100"
-          formControlName="value"
+          [value]="getFormattedDate(formGroup.get('value')?.value)"
+          (change)="onSingleDateChange($event)"
         />
       </div>
 
-      <!-- Date Range -->
       <div *ngIf="isBetween" class="form-group gap-2">
-        <div class="form-group w-100 mb-3">
+        <div class="form-group w-100">
           <label class="field-label" for="from-date">From</label>
           <input
             id="from-date"
@@ -43,7 +43,7 @@ import { UnsubscribeBase } from '../../services/unsubscribe-subscription';
           />
         </div>
 
-        <div class="form-group w-100">
+        <div class="form-group w-100 mt-2">
           <label class="field-label" for="to-date">To</label>
           <input
             id="to-date"
@@ -67,15 +67,21 @@ import { UnsubscribeBase } from '../../services/unsubscribe-subscription';
     </div>
   `,
   imports: [CommonModule, ReactiveFormsModule],
+  providers: [DatePipe],
 })
 export class DateValueComponent extends UnsubscribeBase implements OnInit {
   @Input() formGroup!: FormGroup;
+  @Input() dateFormat: string = 'yyyy-MM-dd';
 
   isBetween = false;
   showValidationError = false;
 
   fromControl = new FormControl<string | null>(null, Validators.required);
   toControl = new FormControl<string | null>(null, Validators.required);
+
+  constructor(private datePipe: DatePipe) {
+    super();
+  }
 
   ngOnInit(): void {
     this.isBetween = this.formGroup.value?.operator === 'between';
@@ -87,15 +93,21 @@ export class DateValueComponent extends UnsubscribeBase implements OnInit {
 
       this.fromControl.valueChanges
         .pipe(takeUntil(this.destroy$))
-        .subscribe(() => this.updateValue());
+        .subscribe(() => this.updateRange());
 
       this.toControl.valueChanges
         .pipe(takeUntil(this.destroy$))
-        .subscribe(() => this.updateValue());
+        .subscribe(() => this.updateRange());
     }
   }
 
-  private updateValue(): void {
+  onSingleDateChange(rawValue: Event): void {
+    const input = rawValue.target as HTMLInputElement;
+    const formatted = this.formatDate(input.value);
+    this.formGroup.get('value')?.setValue(formatted);
+  }
+
+  private updateRange(): void {
     const from = this.fromControl.value;
     const to = this.toControl.value;
 
@@ -105,9 +117,24 @@ export class DateValueComponent extends UnsubscribeBase implements OnInit {
       bothPresent && new Date(from!) > new Date(to!);
 
     if (bothPresent && !this.showValidationError) {
-      this.formGroup.get('value')?.setValue({ from, to });
+      const result = {
+        from: this.formatDate(from!),
+        to: this.formatDate(to!)
+      };
+      this.formGroup.get('value')?.setValue(result);
     } else {
       this.formGroup.get('value')?.setValue(null);
     }
+  }
+
+  formatDate(value: string): string {
+    const parsed = new Date(value);
+    return this.datePipe.transform(parsed, this.dateFormat) ?? value;
+  }
+
+  getFormattedDate(value: string): string {
+    if (!value) return '';
+    const parsed = new Date(value);
+    return this.datePipe.transform(parsed, 'yyyy-MM-dd') ?? '';
   }
 }
