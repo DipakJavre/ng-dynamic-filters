@@ -5,7 +5,7 @@
       [formGroupName]="i"
     >
       <div *ngIf="fg.get('isVisibleInRow')?.value" class="position-relative">
-        <div type="button" class="filter-btn" (click)="toggleDropdown(i)">
+        <div type="button" class="filter-btn" [ngClass]="{ 'active': fg.get('value')?.value?.length }" (click)="toggleDropdown(i)">
           <ng-container
             *ngIf="!fg.get('value')?.value?.length; else selectedFilter"
           >

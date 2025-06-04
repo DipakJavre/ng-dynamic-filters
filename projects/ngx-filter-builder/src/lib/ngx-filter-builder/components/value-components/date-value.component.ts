@@ -15,7 +15,6 @@ import { UnsubscribeBase } from '../../services/unsubscribe-subscription';
   styleUrl: './value-input.scss',
   template: `
     <div class="value-input-wrapper" [formGroup]="formGroup">
-      
       <div *ngIf="!isBetween" class="form-group">
         <label class="field-label" for="date-input">Select Date</label>
         <input
@@ -54,8 +53,7 @@ import { UnsubscribeBase } from '../../services/unsubscribe-subscription';
             [min]="fromControl.value"
             [ngClass]="{
               'input-error':
-                showValidationError ||
-                (toControl.invalid && toControl.touched)
+                showValidationError || (toControl.invalid && toControl.touched)
             }"
           />
         </div>
@@ -113,13 +111,12 @@ export class DateValueComponent extends UnsubscribeBase implements OnInit {
 
     const bothPresent = this.fromControl.valid && this.toControl.valid;
 
-    this.showValidationError =
-      bothPresent && new Date(from!) > new Date(to!);
+    this.showValidationError = bothPresent && new Date(from!) > new Date(to!);
 
     if (bothPresent && !this.showValidationError) {
       const result = {
         from: this.formatDate(from!),
-        to: this.formatDate(to!)
+        to: this.formatDate(to!),
       };
       this.formGroup.get('value')?.setValue(result);
     } else {

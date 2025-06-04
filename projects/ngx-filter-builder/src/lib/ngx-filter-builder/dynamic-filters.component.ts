@@ -6,14 +6,10 @@ import {
   EventEmitter,
   HostListener,
   Input,
-  OnChanges,
   OnDestroy,
   OnInit,
   Output,
-  QueryList,
-  SimpleChanges,
   ViewChild,
-  ViewChildren,
   ViewContainerRef,
   signal,
 } from '@angular/core';
@@ -28,7 +24,7 @@ import {
   FilterResult,
   SupportedDataType,
 } from './utils/common-utilities';
-import { NgFor, NgIf } from '@angular/common';
+import { NgClass, NgFor, NgIf } from '@angular/common';
 import { AddNewFilterComponent } from './components/add-new-filter/add-new-filter.component';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { QueryBuilderService } from './services/query-builder.service';
@@ -50,6 +46,7 @@ import { ValueComponentMap } from './components/value-components/value-component
     HighlightJqlPipe,
     OperatorsPipe,
     SelectOperatorComponent,
+    NgClass
   ],
   templateUrl: './dynamic-filters.component.html',
   styleUrl: './dynamic-filters.component.scss',
@@ -57,7 +54,7 @@ import { ValueComponentMap } from './components/value-components/value-component
 })
 export class DynamicFiltersComponent
   extends UnsubscribeBase
-  implements OnInit, OnDestroy, OnChanges
+  implements OnInit, OnDestroy
 {
   @ViewChild('valueInputContainer', { read: ViewContainerRef })
   valueInputContainer!: ViewContainerRef;
@@ -102,12 +99,6 @@ export class DynamicFiltersComponent
           }
         });
       });
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['filterList'] && changes['filterList'].currentValue) {
-      this.updateValueComponentOptions();
-    }
   }
 
   private buildJQLQuery() {
@@ -227,7 +218,6 @@ export class DynamicFiltersComponent
       });
     }
     this.openDropdownIndex.set(-1);
-  
   }
 
   private destroyAddFilterDropdown() {
@@ -260,19 +250,6 @@ export class DynamicFiltersComponent
     this.cdr.markForCheck();
   }
 
-  private updateValueComponentOptions() {
-    if (!this.valueComponentRef || this.openDropdownIndex() < 0) return;
-
-    const { fieldName, fieldType } = this.getValueComponentType(
-      this.openDropdownIndex()
-    );
-    if (fieldType === 'select') {
-      const options = this.getOptionsForField(fieldName);
-      this.valueComponentRef.instance.updateOptions([...options]);
-      this.valueComponentRef.changeDetectorRef.markForCheck();
-    }
-  }
-
   private getValueComponentType(index: number) {
     const fieldName = this.filters.at(index).get('field')?.value;
     const fieldType = this.getFieldType(fieldName) as SupportedDataType;
@@ -292,14 +269,13 @@ export class DynamicFiltersComponent
       instance.options = [...this.getOptionsForField(fieldName)];
       instance.allowSearch = this.filterList[index]?.type?.allowSearch;
       instance.onSearch = this.filterList[index]?.type?.onSearch;
-      instance.field = this.filterList[index]?.field;
       instance.isMultiple = this.filterList[index].type?.isMultiple;
     }
 
-    if(fieldType === 'date') {
-      instance.dateFormat = this.filterList[index]?.type?.dateFormat || 'dd/MM/yyyy';
+    if (fieldType === 'date') {
+      instance.dateFormat =
+        this.filterList[index]?.type?.dateFormat || 'dd/MM/yyyy';
     }
-  
   }
 
   private getOptionsForField(

@@ -7,7 +7,9 @@ import {
   DynamicFiltersComponent,
   FilterDefinition,
   FilterResult,
+  SelectOption,
 } from '@ngx-filter';
+import { Observable, of } from 'rxjs';
 @Component({
   selector: 'app-root',
   imports: [RouterOutlet, CommonModule, DynamicFiltersComponent],
@@ -50,7 +52,6 @@ export class AppComponent {
         dataType: 'number',
       },
     },
-
     {
       field: 'price',
       label: 'Price',
@@ -72,8 +73,6 @@ export class AppComponent {
           { value: 'Continental', label: 'Continental' },
           { value: 'Italian', label: 'Italian' },
         ],
-        allowSearch: false,
-        onSearch: this.onSearchFactory(),
       },
     },
     {
@@ -122,17 +121,12 @@ export class AppComponent {
     this.result = event;
   }
 
-  onSearchFactory(): (searchText: string, fieldKey: string) => void {
-    return (searchText: string, fieldKey: string) => {
-      const field = this.filterColumnList.find((f) => f.field === fieldKey);
-      if (field) {
-        field.type.options = this.fakeAPIService.filteredOptions(searchText);
-
-        /// Assuming the options are updated asynchronously, & instead of api used setTimeout to simulate dela
-        setTimeout(() => {
-          this.filterColumnList = [...this.filterColumnList];
-        }, 1000);
-      }
+  onSearchFactory(): (
+    searchText: string
+  ) => Observable<SelectOption[]> {
+    return (searchText: string) => {
+      const searchResult = of(this.fakeAPIService.filteredOptions(searchText)) as Observable<SelectOption[]>;
+      return searchResult;
     };
   }
 }
