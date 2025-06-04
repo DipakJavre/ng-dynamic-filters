@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { SelectOption } from '../../utils/common-utilities';
 
 @Component({
   selector: 'app-select-operator',
@@ -11,7 +12,7 @@ import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 export class SelectOperatorComponent {
 
   @Input() formGroup!: FormGroup;
-  @Input() operators: any[] = [];
+  @Input() operators: SelectOption[] = [];
   @Output() onOperatorChanged = new EventEmitter<void>();
 
 }

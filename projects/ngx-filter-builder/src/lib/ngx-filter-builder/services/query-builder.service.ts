@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { FilterResult } from '../utils/common-utilities';
+import { FormGroup } from '@angular/forms';
 
 @Injectable()
 export class QueryBuilderService {
@@ -60,7 +61,7 @@ export class QueryBuilderService {
         ) {
           return `(${field} >= ${value.min} AND ${field} <= ${value.max})`;
         } else {
-          return null; 
+          return null;
         }
 
       default:
@@ -77,5 +78,30 @@ export class QueryBuilderService {
       return values;
     }
     return values.map((v) => this.formatValue(v)).join(', ');
+  }
+
+  computeFilterValidity(fg: FormGroup): boolean {
+    const operator = fg.get('operator')?.value;
+    const value = fg.get('value')?.value;
+
+    if (!operator || value === null || value === undefined) return false;
+
+    if (typeof value === 'string') return value.trim() !== '';
+    if (typeof value === 'number' || typeof value === 'boolean') return true;
+    if (Array.isArray(value)) return value.length > 0;
+    if (typeof value === 'object') return Object.keys(value).length > 0;
+
+    return false;
+  }
+
+  evaluateFilterValidity(filterArray: FormGroup[]): Map<FormGroup, boolean> {
+    const resultMap = new Map<FormGroup, boolean>();
+
+    for (const fg of filterArray) {
+      const isValid = this.computeFilterValidity(fg);
+      resultMap.set(fg, isValid);
+    }
+
+    return resultMap;
   }
 }

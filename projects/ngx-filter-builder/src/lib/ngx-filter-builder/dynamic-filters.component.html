@@ -5,47 +5,27 @@
       [formGroupName]="i"
     >
       <div *ngIf="fg.get('isVisibleInRow')?.value" class="position-relative">
-        <div type="button" class="filter-btn" [ngClass]="{ 'active': fg.get('value')?.value?.length }" (click)="toggleDropdown(i)">
-          <ng-container
-            *ngIf="!fg.get('value')?.value?.length; else selectedFilter"
-          >
+        <div
+          type="button"
+          class="filter-btn"
+          [ngClass]="{ active: validFilterMap.get(fg) }"
+          (click)="toggleDropdown(i)"
+        >
+          <ng-container *ngIf="!validFilterMap.get(fg); else selectedFilter">
             <label class="filter-label">
               {{ fg.get("label")?.value }}
             </label>
           </ng-container>
 
           <ng-template #selectedFilter>
-            <div class="filter-values">
-              <div
-                class="d-flex gap-2 justify-content-between align-items-center"
-              >
-                <span class="filter-field">
-                  {{ fg.get("field")?.value }}
-                </span>
-                <span class="selected-filter-container">
-                  <select
-                    formControlName="operator"
-                    (click)="$event.stopPropagation()"
-                  >
-                    <option
-                      [value]="operator.value"
-                      *ngFor="
-                        let operator of fg.get('field')?.value
-                          | operators : filterList
-                      "
-                    >
-                      {{ operator.value }}
-                    </option>
-                  </select>
-                </span>
-                <span class="filter-value">
-                  {{ fg.get("value")?.value }}
-                </span>
-              </div>
-            </div>
+            <lib-selected-filter-editor
+              [formGroup]="fg"
+              [operators]="fg.get('field')?.value | operators : filterList"
+            ></lib-selected-filter-editor>
           </ng-template>
+
           <div class="ms-3 d-flex">
-           <span class="caret-down"></span>
+            <span class="caret-down"></span>
           </div>
           <div
             class="info-icon"

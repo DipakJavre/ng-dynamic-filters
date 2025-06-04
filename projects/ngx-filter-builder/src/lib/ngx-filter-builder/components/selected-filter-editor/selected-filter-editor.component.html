@@ -1,0 +1,17 @@
+<div class="filter-values" [formGroup]="formGroup">
+  <div class="d-flex gap-2 justify-content-between align-items-center">
+    <span class="filter-field">{{ formGroup.get('field')?.value }}</span>
+
+    <span class="selected-filter-container">
+      <select formControlName="operator" (click)="$event.stopPropagation()">
+        <option *ngFor="let operator of operators" [value]="operator.value">
+          {{ operator.value }}
+        </option>
+      </select>
+    </span>
+
+    <span class="filter-value">
+      {{ formattedValue }}
+    </span>
+  </div>
+</div>

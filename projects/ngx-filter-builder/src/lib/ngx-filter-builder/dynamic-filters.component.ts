@@ -34,6 +34,7 @@ import { SelectOperatorComponent } from './components/select-operator/select-ope
 import { UnsubscribeBase } from './services/unsubscribe-subscription';
 import { takeUntil } from 'rxjs';
 import { ValueComponentMap } from './components/value-components/value-component-map';
+import { SelectedFilterEditorComponent } from './components/selected-filter-editor/selected-filter-editor.component';
 
 @Component({
   selector: 'lib-dynamic-filters',
@@ -46,7 +47,8 @@ import { ValueComponentMap } from './components/value-components/value-component
     HighlightJqlPipe,
     OperatorsPipe,
     SelectOperatorComponent,
-    NgClass
+    NgClass,
+    SelectedFilterEditorComponent
   ],
   templateUrl: './dynamic-filters.component.html',
   styleUrl: './dynamic-filters.component.scss',
@@ -75,6 +77,7 @@ export class DynamicFiltersComponent
 
   @Input() filterList: FilterDefinition[] = [];
   @Output() result = new EventEmitter<FilterResult[]>();
+  validFilterMap = new Map<FormGroup, boolean>();
 
   constructor(
     private fb: FormBuilder,
@@ -99,8 +102,25 @@ export class DynamicFiltersComponent
           }
         });
       });
+      this.setupValidityTracking()
   }
 
+  evaluateValidityFromService(): void {
+    this.validFilterMap = this.queryBuilderService.evaluateFilterValidity(
+      this.filters.controls as FormGroup[]
+    );
+  }
+
+  setupValidityTracking(): void {
+    this.filters.controls.forEach((fg) => {
+      fg.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(() => {
+        const isValid = this.queryBuilderService.computeFilterValidity(
+          fg as FormGroup
+        );
+        this.validFilterMap.set(fg as FormGroup, isValid);
+      });
+    });
+  }
   private buildJQLQuery() {
     const filters: FilterResult[] = this.filtersForm.get('filters')?.value;
     if (filters.length) {
