@@ -68,10 +68,38 @@ export class AppComponent {
       type: {
         dataType: 'select',
         options: [
-          { value: 'North Indian', label: 'North Indian' },
-          { value: 'Mughlai', label: 'Mughlai' },
-          { value: 'Continental', label: 'Continental' },
-          { value: 'Italian', label: 'Italian' },
+          {
+            value: {
+              cuisine: 'North Indian',
+              origin: 'India',
+              spiceLevel: 'High',
+            },
+            label: 'North Indian',
+          },
+          {
+            value: {
+              cuisine: 'Mughlai',
+              origin: 'India (Mughal Empire)',
+              spiceLevel: 'Medium',
+            },
+            label: 'Mughlai',
+          },
+          {
+            value: {
+              cuisine: 'Continental',
+              origin: 'Europe',
+              spiceLevel: 'Low',
+            },
+            label: 'Continental',
+          },
+          {
+            value: {
+              cuisine: 'Italian',
+              origin: 'Italy',
+              spiceLevel: 'Low to Medium',
+            },
+            label: 'Italian',
+          },
         ],
       },
     },
@@ -100,12 +128,38 @@ export class AppComponent {
       type: {
         dataType: 'select',
         options: [
-          { value: 'coffee', label: 'Coffee' },
-          { value: 'dessert', label: 'Dessert' },
-          { value: 'quiet', label: 'Quiet' },
-          { value: 'premium', label: 'Premium' },
-          { value: 'fine-dine', label: 'Fine Dine' },
-          { value: 'gourmet', label: 'Gourmet' },
+          {
+            value: {
+              cuisine: 'North Indian',
+              region: 'North',
+              spiceLevel: 'High',
+            },
+            label: 'North Indian',
+          },
+          {
+            value: {
+              cuisine: 'Mughlai',
+              region: 'North',
+              spiceLevel: 'Medium',
+            },
+            label: 'Mughlai',
+          },
+          {
+            value: {
+              cuisine: 'Continental',
+              region: 'Europe',
+              spiceLevel: 'Low',
+            },
+            label: 'Continental',
+          },
+          {
+            value: {
+              cuisine: 'Italian',
+              region: 'Italy',
+              spiceLevel: 'Low',
+            },
+            label: 'Italian',
+          },
         ],
         isMultiple: true,
         allowSearch: false,
@@ -121,11 +175,11 @@ export class AppComponent {
     this.result = event;
   }
 
-  onSearchFactory(): (
-    searchText: string
-  ) => Observable<SelectOption[]> {
+  onSearchFactory(): (searchText: string) => Observable<SelectOption[]> {
     return (searchText: string) => {
-      const searchResult = of(this.fakeAPIService.filteredOptions(searchText)) as Observable<SelectOption[]>;
+      const searchResult = of(
+        this.fakeAPIService.filteredOptions(searchText)
+      ) as Observable<SelectOption[]>;
       return searchResult;
     };
   }
