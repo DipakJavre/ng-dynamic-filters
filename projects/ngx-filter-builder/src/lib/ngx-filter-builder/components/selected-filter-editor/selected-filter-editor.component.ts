@@ -1,6 +1,8 @@
 import { NgFor } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { UnsubscribeBase } from '../../services/unsubscribe-subscription';
+import { takeUntil } from 'rxjs';
 
 @Component({
   selector: 'lib-selected-filter-editor',
@@ -8,17 +10,19 @@ import { FormGroup, ReactiveFormsModule } from '@angular/forms';
   templateUrl: './selected-filter-editor.component.html',
   styleUrl: './selected-filter-editor.component.scss',
 })
-export class SelectedFilterEditorComponent implements OnInit {
+export class SelectedFilterEditorComponent  extends UnsubscribeBase implements OnInit {
   @Input() formGroup!: FormGroup;
   @Input() operators: { value: string }[] = [];
 
   formattedValue = '';
 
+  constructor() {
+    super()
+  }
+
   ngOnInit(): void {
     this.computeFormattedValue();
-    console.log('formgroup.value', this.formGroup.value);
-
-    this.formGroup.get('value')?.valueChanges.subscribe(() => {
+    this.formGroup.get('value')?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(() => {
       this.computeFormattedValue();
     });
   }
@@ -77,8 +81,6 @@ export class SelectedFilterEditorComponent implements OnInit {
       this.formattedValue = '1 Selected';
       return;
     }
-
-    console.log('value :', value);
     // Default string/number
     this.formattedValue = value.toString();
   }

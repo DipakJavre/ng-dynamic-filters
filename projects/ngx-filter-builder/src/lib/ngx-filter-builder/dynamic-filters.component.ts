@@ -35,6 +35,7 @@ import { UnsubscribeBase } from './services/unsubscribe-subscription';
 import { takeUntil } from 'rxjs';
 import { ValueComponentMap } from './components/value-components/value-component-map';
 import { SelectedFilterEditorComponent } from './components/selected-filter-editor/selected-filter-editor.component';
+// import { SelectedFilterEditorComponent } from './components/selected-filter-editor/selected-filter-editor.component';
 
 @Component({
   selector: 'lib-dynamic-filters',
@@ -77,7 +78,7 @@ export class DynamicFiltersComponent
 
   @Input() filterList: FilterDefinition[] = [];
   @Output() result = new EventEmitter<FilterResult[]>();
-  validFilterMap = new Map<FormGroup, boolean>();
+  // validFilterMap = new Map<FormGroup, boolean>();
 
   constructor(
     private fb: FormBuilder,
@@ -95,32 +96,32 @@ export class DynamicFiltersComponent
       ?.valueChanges.pipe(takeUntil(this.destroy$))
       .subscribe(() => {
         Promise.resolve().then(() => {
-          this.buildJQLQuery();
+          // this.buildJQLQuery();
           if (this.isAddDropdownOpen()) {
             this.isAddDropdownOpen.set(false);
             this.addDropdownDynamicContainer.clear();
           }
         });
       });
-      this.setupValidityTracking()
+      // this.setupValidityTracking()
   }
 
-  evaluateValidityFromService(): void {
-    this.validFilterMap = this.queryBuilderService.evaluateFilterValidity(
-      this.filters.controls as FormGroup[]
-    );
-  }
+  // evaluateValidityFromService(): void {
+  //   this.validFilterMap = this.queryBuilderService.evaluateFilterValidity(
+  //     this.filters.controls as FormGroup[]
+  //   );
+  // }
 
-  setupValidityTracking(): void {
-    this.filters.controls.forEach((fg) => {
-      fg.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(() => {
-        const isValid = this.queryBuilderService.computeFilterValidity(
-          fg as FormGroup
-        );
-        this.validFilterMap.set(fg as FormGroup, isValid);
-      });
-    });
-  }
+  // setupValidityTracking(): void {
+  //   this.filters.controls.forEach((fg) => {
+  //     fg.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(() => {
+  //       const isValid = this.queryBuilderService.computeFilterValidity(
+  //         fg as FormGroup
+  //       );
+  //       this.validFilterMap.set(fg as FormGroup, isValid);
+  //     });
+  //   });
+  // }
   private buildJQLQuery() {
     const filters: FilterResult[] = this.filtersForm.get('filters')?.value;
     if (filters.length) {

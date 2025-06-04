@@ -101,11 +101,29 @@ export class AppComponent {
             label: 'Italian',
           },
         ],
+        isMultiple:true
       },
     },
     {
       field: 'menu',
       label: 'Menu',
+      isVisibleInRow: true,
+      type: {
+        dataType: 'select',
+        options: [
+          { value: 'North Indian', label: 'North Indian' },
+          { value: 'Mughlai', label: 'Mughlai' },
+          { value: 'Continental', label: 'Continental' },
+          { value: 'Italian', label: 'Italian' },
+        ],
+        isMultiple: true,
+        allowSearch: true,
+        onSearch: this.onSearchFactory(),
+      },
+    },
+      {
+      field: 'oldMenu',
+      label: 'Old Menu',
       isVisibleInRow: true,
       type: {
         dataType: 'select',

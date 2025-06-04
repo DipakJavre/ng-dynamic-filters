@@ -8,6 +8,7 @@ import {
 import { CommonModule, DatePipe } from '@angular/common';
 import { takeUntil } from 'rxjs';
 import { UnsubscribeBase } from '../../services/unsubscribe-subscription';
+import * as _ from 'lodash';
 
 @Component({
   standalone: true,
@@ -124,10 +125,20 @@ export class DateValueComponent extends UnsubscribeBase implements OnInit {
     }
   }
 
-  formatDate(value: string): string {
-    const parsed = new Date(value);
-    return this.datePipe.transform(parsed, this.dateFormat) ?? value;
+  private formatDate(value: string | Date): string {
+  const parsed = new Date(value);
+
+  if (!_.isDate(parsed) || isNaN(parsed.getTime())) {
+    return value.toString();
   }
+
+  // Format using native `Intl.DateTimeFormat` (dd-MMM-yyyy)
+  return new Intl.DateTimeFormat('en-GB', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+  }).format(parsed);
+}
 
   getFormattedDate(value: string): string {
     if (!value) return '';

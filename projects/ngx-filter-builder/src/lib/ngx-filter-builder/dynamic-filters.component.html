@@ -8,10 +8,10 @@
         <div
           type="button"
           class="filter-btn"
-          [ngClass]="{ active: validFilterMap.get(fg) }"
+          [ngClass]="{ active: fg.get('operator')?.value?.length }"
           (click)="toggleDropdown(i)"
         >
-          <ng-container *ngIf="!validFilterMap.get(fg); else selectedFilter">
+          <ng-container  *ngIf="!fg.get('operator')?.value?.length; else selectedFilter">
             <label class="filter-label">
               {{ fg.get("label")?.value }}
             </label>
