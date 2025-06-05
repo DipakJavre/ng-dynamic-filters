@@ -79,6 +79,9 @@ $light-gray: #f4f5f7;
     color: $color-muted;
     cursor: not-allowed;
   }
+  .validation-error-icon{
+    font-size: 18px;
+  }
 }
 
 .add-btn,

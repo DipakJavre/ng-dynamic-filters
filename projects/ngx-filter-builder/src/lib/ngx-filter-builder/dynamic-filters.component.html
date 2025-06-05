@@ -14,18 +14,6 @@
           }"
           (click)="toggleDropdown(i)"
         >
-          <!-- <div
-          type="button"
-          class="filter-btn"
-          [ngClass]="
-            fg.get('operator')?.value && fg.get('value')?.value?.length
-              ? 'active'
-              : fg.get('operator')?.touched && !fg.get('value')?.value?.length
-              ? 'error'
-              : ''
-          "
-          (click)="toggleDropdown(i)"
-        > -->
           <ng-container
             *ngIf="!fg.get('operator')?.value?.length; else selectedFilter"
           >
@@ -41,22 +29,23 @@
             ></lib-selected-filter-editor>
           </ng-template>
 
-          <div class="ms-3 d-flex">
+         
+          <div
+            class="info-icon"
+            *ngIf="isTouchedAndInvalid(fg)"
+            [attr.title]="getFieldTooltipTitle(fg)"
+          >
+            <span class="text-danger ms-2 validation-error-icon"> &#8861; </span>
+          </div>
+          <div
+            class="info-icon"
+            *ngIf="fieldInfoMap.get(fg.get('field')?.value)"
+            [title]="fieldInfoMap.get(fg.get('field')?.value)"
+          >
+            <span class="info-icon-circle">𝒊</span>
+          </div>
+           <div class="ms-3 d-flex">
             <span class="caret-down"></span>
-          </div>
-          <div
-            class="info-icon"
-            *ngIf="fieldInfoMap.get(fg.get('field')?.value)"
-            [title]="fieldInfoMap.get(fg.get('field')?.value)"
-          >
-            <span class="info-icon-circle">𝒊</span>
-          </div>
-          <div
-            class="info-icon"
-            *ngIf="fieldInfoMap.get(fg.get('field')?.value)"
-            [title]="fieldInfoMap.get(fg.get('field')?.value)"
-          >
-            <span class="info-icon-circle">𝒊</span>
           </div>
         </div>
 

@@ -216,6 +216,7 @@ export class DynamicFiltersComponent
         operator: null,
         value: isMultipleType ? [] : null,
       });
+      filterGroup.get('operator')?.markAsUntouched();
     }
     this.openDropdownIndex.set(-1);
   }
@@ -299,13 +300,25 @@ export class DynamicFiltersComponent
 
   private hasMeaningfulValue(value: any): boolean {
     if (value === null || value === undefined) return false;
-
     if (typeof value === 'string') return value.trim() !== '';
     if (typeof value === 'number' || typeof value === 'boolean') return true;
     if (Array.isArray(value)) return value.length > 0;
     if (typeof value === 'object') return Object.keys(value).length > 0;
-
     return false;
+  }
+
+  getFieldTooltipTitle(fg: FormGroup): string | null {
+    const operatorTouched = fg.get('operator')?.touched;
+    const value = fg.get('value')?.value;
+
+    if (!operatorTouched) return null;
+
+    if (!this.hasMeaningfulValue(value)) {
+      const label = fg.get('label')?.value || 'This field';
+      return `${label} requires a valid value.`;
+    }
+
+    return null;
   }
 
   override ngOnDestroy() {
