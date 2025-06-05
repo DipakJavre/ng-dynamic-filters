@@ -1,18 +1,18 @@
-$font-family: 'Poppins', sans-serif;
-$font-size: 14px;
-$color-background: #ffffff;
-$color-border: #dfe1e6;
-$color-primary: #0052cc;
-$color-primary-hover: #0747a6;
-$color-neutral: #172b4d;
-$color-muted: #6b778c;
-$color-accent: #deebff;
-$color-accent-hover: #b3d4ff;
-$color-selected: #e9f2ff;
-$color-shadow: rgba(9, 30, 66, 0.15);
-$color-disabled-bg: #f4f5f7;
-$color-placeholder: #a5adba;
-$color-error: #de350b;
+$font-family: var(--ngx-filter-font-family);
+$font-size: var(--ngx-filter-font-size);
+$color-background: var(--ngx-filter-color-background);
+$color-border: var(--ngx-filter-color-border);
+$color-primary: var(--ngx-filter-color-primary);
+$color-primary-hover: var(--ngx-filter-color-primary-hover);
+$color-neutral: var(--ngx-filter-color-neutral);
+$color-muted: var(--ngx-filter-color-muted);
+$color-accent: var(--ngx-filter-color-accent);
+$color-accent-hover: var(--ngx-filter-color-accent-hover);
+$color-selected: var(--ngx-filter-color-selected);
+$color-shadow: var(--ngx-filter-color-shadow);
+$color-disabled-bg: var(--ngx-filter-color-disabled-bg);
+$color-placeholder: var(--ngx-filter-color-placeholder);
+$color-error: var(--ngx-filter-color-error);
 
 
 
@@ -40,6 +40,7 @@ $color-error: #de350b;
     border-radius: 3px;
     background-color: $color-background;
     transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    color: var(--ngx-filter-color-neutral);
 
     &:focus {
       border-color: $color-primary;
@@ -55,68 +56,6 @@ $color-error: #de350b;
     cursor: not-allowed;
   }
 
-  ng-select {
-    width: 100%;
-    font-size: $font-size;
-
-    .ng-select-container {
-      border: 1px solid $color-border;
-      border-radius: 3px;
-      min-height: 36px;
-      padding: 2px 8px;
-      transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-
-      &:focus-within,
-      &.ng-select-focused {
-        border-color: $color-primary;
-        box-shadow: 0 0 0 3px rgba($color-primary, 0.2);
-      }
-    }
-
-    .ng-value {
-      color: $color-neutral;
-    }
-
-    .ng-placeholder {
-      color: $color-placeholder;
-    }
-
-    .ng-clear-wrapper {
-      color: $color-muted;
-    }
-
-    .ng-dropdown-panel {
-      border-radius: 3px;
-      border: 1px solid $color-border;
-      box-shadow: 0 4px 8px $color-shadow;
-      background-color: $color-background;
-    }
-
-    .ng-option {
-      padding: 8px 12px;
-      font-size: $font-size;
-      color: $color-neutral;
-      cursor: pointer;
-
-      &.ng-option-highlighted {
-        background-color: $color-accent;
-        color: $color-primary-hover;
-      }
-
-      &.ng-option-selected {
-        background-color: $color-primary;
-        color: $color-background;
-      }
-    }
-
-    &[disabled] {
-      background-color: $color-disabled-bg;
-      border-color: $color-border;
-      color: $color-placeholder;
-      cursor: not-allowed;
-    }
-  }
-
   .checkbox-wrapper {
     display: flex;
     align-items: center;
@@ -127,7 +66,7 @@ $color-error: #de350b;
       width: 16px;
       height: 16px;
       cursor: pointer;
-      accent-color: $color-primary;
+      accent-color: $color-neutral;
     }
 
     label {

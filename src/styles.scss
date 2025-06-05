@@ -1,5 +1,47 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
-@import '@ng-select/ng-select/themes/default.theme.css';
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap");
+@import "@ng-select/ng-select/themes/default.theme.css";
 body {
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
 }
+
+// _theme.scss
+
+:root {
+  --ngx-filter-font-family: "Poppins", sans-serif;
+  --ngx-filter-font-size: 14px;
+  --ngx-filter-color-background: #ffffff;
+  --ngx-filter-color-border: #dfe1e6;
+  --ngx-filter-color-primary: #0052cc;
+  --ngx-filter-color-primary-hover: #0747a6;
+  --ngx-filter-color-neutral: #172b4d;
+  --ngx-filter-color-muted: #6b778c;
+  --ngx-filter-color-accent: #deebff;
+  --ngx-filter-color-accent-hover: #b3d4ff;
+  --ngx-filter-color-selected: #e9f2ff;
+  --ngx-filter-color-shadow: rgba(9, 30, 66, 0.15);
+  --ngx-filter-color-disabled-bg: #f4f5f7;
+  --ngx-filter-color-placeholder: #a5adba;
+  --ngx-filter-color-error: #de350b;
+  --ngx-filter-light-gray: #f4f5f7;
+  --ngx-filter-color-placeholder: #a5adba;
+}
+
+// :root {
+//   --ngx-filter-font-family: "Poppins", sans-serif;
+//   --ngx-filter-font-size: 14px;
+//   --ngx-filter-color-background: #1e1e2f;
+//   --ngx-filter-color-border: #3c3f4e;
+//   --ngx-filter-color-primary: #fff;
+//   --ngx-filter-color-primary-hover: #2684ff;
+//   --ngx-filter-color-neutral: #f4f5f7;
+//   --ngx-filter-color-muted: #a5adba;
+//   --ngx-filter-color-accent: #2e3a59;
+//   --ngx-filter-color-accent-hover: #435172;
+//   --ngx-filter-color-selected: #2c3e50;
+//   --ngx-filter-color-shadow: rgba(0, 0, 0, 0.6);
+//   --ngx-filter-color-disabled-bg: #2b2b3d;
+//   --ngx-filter-color-placeholder: #7a869a;
+//   --ngx-filter-color-error: #ff6b6b;
+//   --ngx-filter-light-gray: #3d3d3d;
+//   --ngx-filter-color-placeholder: #666666;
+// }

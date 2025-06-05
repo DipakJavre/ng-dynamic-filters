@@ -94,7 +94,7 @@ export class DynamicFiltersComponent
       .get('filters')
       ?.valueChanges.pipe(takeUntil(this.destroy$))
       .subscribe(() => {
-        // this.buildJQLQuery();
+        this.buildJQLQuery();
         if (this.isAddDropdownOpen()) {
           this.isAddDropdownOpen.set(false);
           this.addDropdownDynamicContainer.clear();
@@ -108,6 +108,7 @@ export class DynamicFiltersComponent
     } else {
       this.jqlQuery.set('');
     }
+    
     this.result.emit(
       filters
         .filter(

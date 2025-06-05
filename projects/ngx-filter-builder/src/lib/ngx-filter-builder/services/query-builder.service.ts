@@ -60,6 +60,13 @@ export class QueryBuilderService {
           typeof value.max === 'number'
         ) {
           return `(${field} >= ${value.min} AND ${field} <= ${value.max})`;
+        } else if (
+          typeof value === 'object' &&
+          value !== null &&
+          typeof value.from === 'number' &&
+          typeof value.to === 'number'
+        ) {
+          return `(${field} >= ${value.from} AND ${field} <= ${value.to})`;
         } else {
           return null;
         }
@@ -74,34 +81,19 @@ export class QueryBuilderService {
   }
 
   private formatArray(values: any[]): string {
-    if (typeof values === 'string') {
-      return values;
-    }
-    return values.map((v) => this.formatValue(v)).join(', ');
-  }
+    if (!Array.isArray(values)) return '';
 
-  computeFilterValidity(fg: FormGroup): boolean {
-    const operator = fg.get('operator')?.value;
-    const value = fg.get('value')?.value;
+    return values
+      .map((v) => {
+        if (typeof v === 'object' && v !== null) {
+          const keyValues = Object.entries(v)
+            .map(([key, val]) => `${key}: ${val}`)
+            .join(', ');
+          return this.formatValue(keyValues);
+        }
 
-    if (!operator || value === null || value === undefined) return false;
-
-    if (typeof value === 'string') return value.trim() !== '';
-    if (typeof value === 'number' || typeof value === 'boolean') return true;
-    if (Array.isArray(value)) return value.length > 0;
-    if (typeof value === 'object') return Object.keys(value).length > 0;
-
-    return false;
-  }
-
-  evaluateFilterValidity(filterArray: FormGroup[]): Map<FormGroup, boolean> {
-    const resultMap = new Map<FormGroup, boolean>();
-
-    for (const fg of filterArray) {
-      const isValid = this.computeFilterValidity(fg);
-      resultMap.set(fg, isValid);
-    }
-
-    return resultMap;
+        return this.formatValue(v);
+      })
+      .join(', ');
   }
 }

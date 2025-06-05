@@ -38,7 +38,7 @@
             <span class="text-danger ms-2 validation-error-icon"> &#8861; </span>
           </div>
           <div
-            class="info-icon"
+            class="info-icon ms-3"
             *ngIf="fieldInfoMap.get(fg.get('field')?.value)"
             [title]="fieldInfoMap.get(fg.get('field')?.value)"
           >
@@ -80,7 +80,7 @@
   <div class="mt-4" *ngIf="jqlQuery()">
     <div class="alert alert-success w-100">
       <h5 class="m-0">
-        <pre class="m-0" [innerHTML]="jqlQuery() | highlightJql"></pre>
+        <pre class="m-0 text-wrap" [innerHTML]="jqlQuery() | highlightJql"></pre>
       </h5>
     </div>
   </div>

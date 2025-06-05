@@ -1,7 +1,6 @@
-$color-accent: #deebff;
-$light-gray: #f4f5f7;
-$color-primary: #0052cc;
-
+$color-accent: var(--ngx-filter-color-accent);
+$light-gray: var(--ngx-filter-color-disabled-bg);
+$color-neutral: var(--ngx-filter-color-neutral);
 
 
 select{
@@ -12,4 +11,5 @@ select{
     font-size: 13px;
     text-align: center;
     appearance: none;
+    color: $color-neutral;
 }

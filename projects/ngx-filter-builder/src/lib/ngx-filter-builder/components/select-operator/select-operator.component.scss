@@ -1,15 +1,15 @@
-$font-family: 'Poppins', sans-serif;
-$font-size: 14px;
-$color-background: #ffffff;
-$color-border: #dfe1e6;
-$color-primary: #0052cc;
-$color-primary-hover: #0747a6;
-$color-neutral: #172b4d;
-$color-muted: #6b778c;
-$color-accent: #deebff;
-$color-accent-hover: #b3d4ff;
-$color-selected: #e9f2ff;
-$color-shadow: rgba(9, 30, 66, 0.15);
+$font-family: var(--ngx-filter-font-family);
+$font-size: var(--ngx-filter-font-size);
+$color-background: var(--ngx-filter-color-background);
+$color-border: var(--ngx-filter-color-border);
+$color-primary: var(--ngx-filter-color-primary);
+$color-primary-hover: var(--ngx-filter-color-primary-hover);
+$color-neutral: var(--ngx-filter-color-neutral);
+$color-muted: var(--ngx-filter-color-muted);
+$color-accent: var(--ngx-filter-color-accent);
+$color-accent-hover: var(--ngx-filter-color-accent-hover);
+$color-selected: var(--ngx-filter-color-selected);
+$color-shadow: var(--ngx-filter-color-shadow);
 
 .operator {
   display: flex;

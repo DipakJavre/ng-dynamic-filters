@@ -1,16 +1,17 @@
-$font-family: "Poppins", sans-serif;
-$font-size: 14px;
-$color-background: #ffffff;
-$color-border: #dfe1e6;
-$color-primary: #0052cc;
-$color-primary-hover: #0747a6;
-$color-neutral: #172b4d;
-$color-muted: #6b778c;
-$color-accent: #deebff;
-$color-accent-hover: #b3d4ff;
-$color-selected: #e9f2ff;
-$color-shadow: rgba(9, 30, 66, 0.15);
-$light-gray: #f4f5f7;
+$font-family: var(--ngx-filter-font-family);
+$font-size: var(--ngx-filter-font-size);
+$color-background: var(--ngx-filter-color-background);
+$color-border: var(--ngx-filter-color-border);
+$color-primary: var(--ngx-filter-color-primary);
+$color-primary-hover: var(--ngx-filter-color-primary-hover);
+$color-neutral: var(--ngx-filter-color-neutral);
+$color-muted: var(--ngx-filter-color-muted);
+$color-accent: var(--ngx-filter-color-accent);
+$color-accent-hover: var(--ngx-filter-color-accent-hover);
+$color-selected: var(--ngx-filter-color-selected);
+$color-shadow: var(--ngx-filter-color-shadow);
+$light-gray: var(--ngx-filter-light-gray);
+$color-placeholder: var(--ngx-filter-color-placeholder);
 
 .button-options,
 .all-filter-list {
@@ -60,8 +61,7 @@ $light-gray: #f4f5f7;
   align-items: center;
   justify-content: center;
   border: 1px solid $color-accent !important;
-    height: 100%;
-
+  height: 100%;
 
   &.active {
     background-color: $color-accent;
@@ -79,7 +79,7 @@ $light-gray: #f4f5f7;
     color: $color-muted;
     cursor: not-allowed;
   }
-  .validation-error-icon{
+  .validation-error-icon {
     font-size: 18px;
   }
 }
@@ -107,7 +107,6 @@ $light-gray: #f4f5f7;
   text-align: center;
   padding-top: 2.5px !important;
 }
-
 ::ng-deep .jira-ng-select {
   width: 100%;
   border: 1px solid $color-border;
@@ -115,7 +114,17 @@ $light-gray: #f4f5f7;
   background-color: $color-background;
   font-size: $font-size;
   color: $color-neutral;
-
+  &.ng-select-opened > .ng-select-container {
+    background-color: $color-background !important;
+    color: $color-neutral !important;
+  }
+  .ng-dropdown-panel .ng-dropdown-panel-items .ng-option {
+    background: var(--ngx-filter-color-accent);
+    color: var(--ngx-filter-color-neutral);
+    &:hover {
+      background: var(--ngx-filter-color-accent-hover);
+    }
+  }
   .ng-select-container {
     border: none;
     box-shadow: inset 0 0 0 1px $color-border;
@@ -124,6 +133,20 @@ $light-gray: #f4f5f7;
     min-height: 36px;
     display: flex;
     align-items: center;
+    background-color: $color-background;
+    color: $color-neutral;
+
+    input {
+      background-color: $color-background;
+      color: var(--ngx-filter-color-neutral);
+      font-size: $font-size;
+      border: none;
+      outline: none;
+
+      &::placeholder {
+        color: $color-placeholder;
+      }
+    }
   }
 
   .ng-select-container:hover {
@@ -136,6 +159,7 @@ $light-gray: #f4f5f7;
     padding: 2px 6px;
     margin-right: 4px;
     font-size: 13px;
+    color: $color-primary;
   }
 
   .ng-arrow-wrapper {
@@ -147,7 +171,9 @@ $light-gray: #f4f5f7;
     border-radius: 4px;
     box-shadow: 0 4px 8px $color-shadow;
     margin-top: 4px;
-    font-size: 14px;
+    font-size: $font-size;
+    background-color: $color-background;
+    color: $color-neutral;
   }
 
   .ng-option {
