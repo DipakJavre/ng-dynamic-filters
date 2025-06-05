@@ -22,6 +22,7 @@ import * as _ from 'lodash';
           id="date-input"
           type="date"
           class="field-input w-100"
+          (click)="openDatePicker($event)"
           [value]="getFormattedDate(formGroup.get('value')?.value)"
           (change)="onSingleDateChange($event)"
         />
@@ -35,6 +36,7 @@ import * as _ from 'lodash';
             type="date"
             class="field-input w-100"
             [formControl]="fromControl"
+            (click)="openDatePicker($event)"
             [ngClass]="{
               'input-error':
                 showValidationError ||
@@ -51,6 +53,7 @@ import * as _ from 'lodash';
             class="field-input w-100"
             [formControl]="toControl"
             [disabled]="fromControl.invalid"
+            (click)="openDatePicker($event)"
             [min]="fromControl.value"
             [ngClass]="{
               'input-error':
@@ -126,23 +129,30 @@ export class DateValueComponent extends UnsubscribeBase implements OnInit {
   }
 
   private formatDate(value: string | Date): string {
-  const parsed = new Date(value);
+    const parsed = new Date(value);
 
-  if (!_.isDate(parsed) || isNaN(parsed.getTime())) {
-    return value.toString();
+    if (!_.isDate(parsed) || isNaN(parsed.getTime())) {
+      return value.toString();
+    }
+
+    // Format using native `Intl.DateTimeFormat` (dd-MMM-yyyy)
+    return new Intl.DateTimeFormat('en-GB', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+    }).format(parsed);
   }
-
-  // Format using native `Intl.DateTimeFormat` (dd-MMM-yyyy)
-  return new Intl.DateTimeFormat('en-GB', {
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric',
-  }).format(parsed);
-}
 
   getFormattedDate(value: string): string {
     if (!value) return '';
     const parsed = new Date(value);
     return this.datePipe.transform(parsed, 'yyyy-MM-dd') ?? '';
   }
+
+  openDatePicker(event: Event): void {
+  const input = event.target as HTMLInputElement;
+  if (input?.showPicker) {
+    input.showPicker();
+  }
+}
 }

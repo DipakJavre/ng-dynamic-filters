@@ -49,7 +49,7 @@ import { SelectedFilterEditorComponent } from './components/selected-filter-edit
     OperatorsPipe,
     SelectOperatorComponent,
     NgClass,
-    SelectedFilterEditorComponent
+    SelectedFilterEditorComponent,
   ],
   templateUrl: './dynamic-filters.component.html',
   styleUrl: './dynamic-filters.component.scss',
@@ -78,7 +78,6 @@ export class DynamicFiltersComponent
 
   @Input() filterList: FilterDefinition[] = [];
   @Output() result = new EventEmitter<FilterResult[]>();
-  // validFilterMap = new Map<FormGroup, boolean>();
 
   constructor(
     private fb: FormBuilder,
@@ -95,33 +94,13 @@ export class DynamicFiltersComponent
       .get('filters')
       ?.valueChanges.pipe(takeUntil(this.destroy$))
       .subscribe(() => {
-        Promise.resolve().then(() => {
-          // this.buildJQLQuery();
-          if (this.isAddDropdownOpen()) {
-            this.isAddDropdownOpen.set(false);
-            this.addDropdownDynamicContainer.clear();
-          }
-        });
+        // this.buildJQLQuery();
+        if (this.isAddDropdownOpen()) {
+          this.isAddDropdownOpen.set(false);
+          this.addDropdownDynamicContainer.clear();
+        }
       });
-      // this.setupValidityTracking()
   }
-
-  // evaluateValidityFromService(): void {
-  //   this.validFilterMap = this.queryBuilderService.evaluateFilterValidity(
-  //     this.filters.controls as FormGroup[]
-  //   );
-  // }
-
-  // setupValidityTracking(): void {
-  //   this.filters.controls.forEach((fg) => {
-  //     fg.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(() => {
-  //       const isValid = this.queryBuilderService.computeFilterValidity(
-  //         fg as FormGroup
-  //       );
-  //       this.validFilterMap.set(fg as FormGroup, isValid);
-  //     });
-  //   });
-  // }
   private buildJQLQuery() {
     const filters: FilterResult[] = this.filtersForm.get('filters')?.value;
     if (filters.length) {
@@ -304,6 +283,29 @@ export class DynamicFiltersComponent
   ): { label: string; value: any }[] {
     const field = this.filterList.find((f) => f.field === fieldName);
     return field?.type?.options ?? [];
+  }
+
+  isTouchedAndInvalid(fg: FormGroup) {
+    const operatorTouched = fg.get('operator')?.touched;
+    const value = fg.get('value')?.value;
+    return operatorTouched && !this.hasMeaningfulValue(value);
+  }
+
+  isTouchedAndValid(fg: FormGroup) {
+    const operatorTouched = fg.get('operator')?.touched;
+    const value = fg.get('value')?.value;
+    return operatorTouched && this.hasMeaningfulValue(value);
+  }
+
+  private hasMeaningfulValue(value: any): boolean {
+    if (value === null || value === undefined) return false;
+
+    if (typeof value === 'string') return value.trim() !== '';
+    if (typeof value === 'number' || typeof value === 'boolean') return true;
+    if (Array.isArray(value)) return value.length > 0;
+    if (typeof value === 'object') return Object.keys(value).length > 0;
+
+    return false;
   }
 
   override ngOnDestroy() {

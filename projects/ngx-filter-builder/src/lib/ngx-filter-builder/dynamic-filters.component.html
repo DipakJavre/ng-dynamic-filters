@@ -8,10 +8,27 @@
         <div
           type="button"
           class="filter-btn"
-          [ngClass]="{ active: fg.get('operator')?.value?.length }"
+          [ngClass]="{
+            error: isTouchedAndInvalid(fg),
+            active: isTouchedAndValid(fg)
+          }"
           (click)="toggleDropdown(i)"
         >
-          <ng-container  *ngIf="!fg.get('operator')?.value?.length; else selectedFilter">
+          <!-- <div
+          type="button"
+          class="filter-btn"
+          [ngClass]="
+            fg.get('operator')?.value && fg.get('value')?.value?.length
+              ? 'active'
+              : fg.get('operator')?.touched && !fg.get('value')?.value?.length
+              ? 'error'
+              : ''
+          "
+          (click)="toggleDropdown(i)"
+        > -->
+          <ng-container
+            *ngIf="!fg.get('operator')?.value?.length; else selectedFilter"
+          >
             <label class="filter-label">
               {{ fg.get("label")?.value }}
             </label>
@@ -26,6 +43,13 @@
 
           <div class="ms-3 d-flex">
             <span class="caret-down"></span>
+          </div>
+          <div
+            class="info-icon"
+            *ngIf="fieldInfoMap.get(fg.get('field')?.value)"
+            [title]="fieldInfoMap.get(fg.get('field')?.value)"
+          >
+            <span class="info-icon-circle">𝒊</span>
           </div>
           <div
             class="info-icon"

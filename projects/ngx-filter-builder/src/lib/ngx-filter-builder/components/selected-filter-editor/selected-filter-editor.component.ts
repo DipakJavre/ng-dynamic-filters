@@ -3,6 +3,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { UnsubscribeBase } from '../../services/unsubscribe-subscription';
 import { takeUntil } from 'rxjs';
+import { SelectOption } from '@ngx-filter';
 
 @Component({
   selector: 'lib-selected-filter-editor',
@@ -12,7 +13,7 @@ import { takeUntil } from 'rxjs';
 })
 export class SelectedFilterEditorComponent  extends UnsubscribeBase implements OnInit {
   @Input() formGroup!: FormGroup;
-  @Input() operators: { value: string }[] = [];
+  @Input() operators: SelectOption[] = [];
 
   formattedValue = '';
 
