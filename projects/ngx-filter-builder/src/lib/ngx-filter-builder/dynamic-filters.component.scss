@@ -119,7 +119,7 @@ $color-placeholder: var(--ngx-filter-color-placeholder);
     color: $color-neutral !important;
   }
   .ng-dropdown-panel .ng-dropdown-panel-items .ng-option {
-    background: var(--ngx-filter-color-accent);
+    background: var(--ngx-filter-color-background);
     color: var(--ngx-filter-color-neutral);
     &:hover {
       background: var(--ngx-filter-color-accent-hover);
