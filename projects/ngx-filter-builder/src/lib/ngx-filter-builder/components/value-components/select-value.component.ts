@@ -8,7 +8,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { debounceTime, filter as rxFilter, takeUntil } from 'rxjs/operators';
-import { from, isObservable, lastValueFrom } from 'rxjs';
+import { from, lastValueFrom } from 'rxjs';
 import { UnsubscribeBase } from '../../services/unsubscribe-subscription';
 import { SelectOption } from '../../utils/common-utilities';
 

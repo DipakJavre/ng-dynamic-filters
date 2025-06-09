@@ -217,7 +217,7 @@ npm run test
 
 ## License
 
-MIT License © Your Name or Company
+MIT License © TechTose
 
 ---
 
@@ -233,6 +233,3 @@ Thank you for using **ngx-filter-builder**!
 ```
 
 ---
-
-Let me know if you want me to help with package.json or publishing steps!
-```

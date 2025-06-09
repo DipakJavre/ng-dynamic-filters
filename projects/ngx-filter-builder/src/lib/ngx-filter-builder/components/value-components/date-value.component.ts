@@ -86,12 +86,11 @@ export class DateValueComponent extends UnsubscribeBase implements OnInit {
   }
 
   ngOnInit(): void {
-    this.isBetween = this.formGroup.value?.operator === 'between';
-
+    this.isBetween = this.formGroup.value?.operator === 'between';    
     if (this.isBetween) {
       const currentValue = this.formGroup.value?.value;
-      this.fromControl.setValue(currentValue?.from ?? null);
-      this.toControl.setValue(currentValue?.to ?? null);
+      this.fromControl.setValue(this.getFormattedDate(currentValue?.from) ?? null);
+      this.toControl.setValue(this.getFormattedDate(currentValue?.to) ?? null);
 
       this.fromControl.valueChanges
         .pipe(takeUntil(this.destroy$))

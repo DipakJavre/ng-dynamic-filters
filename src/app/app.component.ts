@@ -47,7 +47,7 @@ export class AppComponent {
     {
       field: 'rating',
       label: 'Ratting',
-      isVisibleInRow: true,
+      isVisibleInRow: false,
       type: {
         dataType: 'number',
       },
