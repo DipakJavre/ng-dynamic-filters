@@ -14,6 +14,7 @@ import {
   signal,
 } from '@angular/core';
 import {
+  AbstractControl,
   FormArray,
   FormBuilder,
   FormGroup,
@@ -32,10 +33,9 @@ import { HighlightJqlPipe } from './pipes/HighlightJqlPipe ';
 import { OperatorsPipe } from './pipes/operator.pipe';
 import { SelectOperatorComponent } from './components/select-operator/select-operator.component';
 import { UnsubscribeBase } from './services/unsubscribe-subscription';
-import { takeUntil } from 'rxjs';
+import { debounceTime, takeUntil, tap } from 'rxjs';
 import { ValueComponentMap } from './components/value-components/value-component-map';
 import { SelectedFilterEditorComponent } from './components/selected-filter-editor/selected-filter-editor.component';
-// import { SelectedFilterEditorComponent } from './components/selected-filter-editor/selected-filter-editor.component';
 
 @Component({
   selector: 'lib-dynamic-filters',
@@ -76,6 +76,8 @@ export class DynamicFiltersComponent
 
   filtersForm!: FormGroup;
 
+  @Input() selectedFilters: FilterResult[] = [];
+
   @Input() filterList: FilterDefinition[] = [];
   @Output() result = new EventEmitter<FilterResult[]>();
 
@@ -90,59 +92,127 @@ export class DynamicFiltersComponent
 
   ngOnInit(): void {
     this.initializeFiltersForm();
-    this.filtersForm
-      .get('filters')
-      ?.valueChanges.pipe(takeUntil(this.destroy$))
-      .subscribe(() => {
-        this.buildJQLQuery();
-        if (this.isAddDropdownOpen()) {
-          this.isAddDropdownOpen.set(false);
-          this.addDropdownDynamicContainer.clear();
-        }
-      });
-  }
-  private buildJQLQuery() {
-    const filters: FilterResult[] = this.filtersForm.get('filters')?.value;
-    if (filters.length) {
-      this.jqlQuery.set(this.queryBuilderService.buildJqlQuery(filters));
-    } else {
-      this.jqlQuery.set('');
-    }
-    
-    this.result.emit(
-      filters
-        .filter(
-          (f: FilterResult) => f.value !== null && f.value !== '' && f.operator
-        )
-        .map((f: FilterResult) => {
-          return {
-            field: f.field,
-            operator: f.operator,
-            value: f.value,
-          };
-        })
-    );
+    this.subscribeToFilterChanges();
   }
 
-  private initializeFiltersForm() {
+  private subscribeToFilterChanges(): void {
+    const filtersArray = this.filtersForm.get('filters') as FormArray;
+
+    filtersArray.controls.forEach((filterGroup: AbstractControl) => {
+      ['operator', 'value'].forEach((fieldKey: string) => {
+        const control = filterGroup.get(fieldKey);
+
+        if (!control) return;
+
+        control.valueChanges
+          .pipe(
+            tap(() => this.closeAddDropdownIfOpen()),
+            debounceTime(300),
+            takeUntil(this.destroy$)
+          )
+          .subscribe(() => this.handleFilterValueChange(filterGroup));
+      });
+    });
+  }
+
+  private closeAddDropdownIfOpen(): void {
+    if (this.isAddDropdownOpen()) {
+      this.isAddDropdownOpen.set(false);
+      this.addDropdownDynamicContainer.clear();
+    }
+  }
+
+  private handleFilterValueChange(filterGroup: AbstractControl): void {
+    const value = filterGroup.get('value')?.value;
+    const operatorValue = filterGroup.get('operator')?.value;    
+
+    if (
+      operatorValue &&
+      ['in', 'not in'].includes(operatorValue) &&
+      Array.isArray(value) &&
+      !value.length
+    ) {
+      return;
+    }
+
+    const isValidValue =
+      (value !== null && value !== undefined && value !== '');
+
+    if (isValidValue) {
+      this.buildJQLQuery();
+    }
+  }
+  private buildJQLQuery(): void {
+    const filters: FilterResult[] =
+      this.filtersForm.get('filters')?.value || [];
+
+    if (!filters.length) {
+      this.jqlQuery.set('');
+      return;
+    }
+
+    const hasInvalidFilters = filters.some(
+      (filter: FilterResult) => typeof filter.value !== 'boolean' && filter.operator && (!filter.value)
+    );
+
+    if (hasInvalidFilters) {
+      return;
+    }
+
+    const jqlQueryString = this.queryBuilderService.buildJqlQuery(filters);
+    this.jqlQuery.set(jqlQueryString);
+
+    const selectedFilters = filters
+      .filter(
+        (filter: FilterResult) =>
+          filter.value !== null &&
+          filter.value !== '' &&
+          !!filter.operator &&
+          !!filter.field
+      )
+      .map((filter: FilterResult) => ({
+        field: filter.field,
+        operator: filter.operator,
+        value: filter.value,
+      }));
+
+    this.result.emit(selectedFilters);
+  }
+
+  private initializeFiltersForm(): void {
     this.filtersForm = this.fb.group({
       filters: this.fb.array([]),
     });
 
     this.filterList.forEach((field) => {
-      const isMultipleType = field.type.isMultiple;
-      const filterGroup = this.fb.group({
-        operator: [null],
-        field: [field.field],
-        value: [isMultipleType ? [] : null],
-        isVisibleInRow: [field.isVisibleInRow],
-        label: [field.label],
-      });
+      const filterGroup = this.createFilterGroup(field);
       this.filters.push(filterGroup);
-
-      // Map field information for display
       this.mapFieldInformation(field);
     });
+
+    this.buildJQLQuery();
+  }
+
+  private createFilterGroup(field: any): FormGroup {
+    const isMultipleType = field.type?.isMultiple || false;
+    const selectedFilter = this.getSelectedFilter(field.field);
+    const group = this.fb.group({
+      field: [field.field],
+      operator: [selectedFilter?.operator || null],
+      value: [
+        selectedFilter ? selectedFilter.value : isMultipleType ? [] : null,
+      ],
+      isVisibleInRow: [field.isVisibleInRow || false],
+      label: [field.label || ''],
+    });
+    if (selectedFilter) {
+      group.get('operator')?.markAsTouched();
+    }
+    return group;
+  }
+
+  private getSelectedFilter(fieldName: string): FilterResult | undefined {
+    return this.selectedFilters.find((f) => f.field === fieldName);
   }
 
   private mapFieldInformation(field: FilterDefinition) {
@@ -165,9 +235,8 @@ export class DynamicFiltersComponent
       .get('operator')?.value;
 
     if (operatorValue) {
-      setTimeout(() => {
-        this.loadValueComponentDefault(this.openDropdownIndex());
-      });
+      this.cdr.detectChanges();
+      this.loadValueComponentDefault(this.openDropdownIndex());
     }
   }
 
@@ -178,9 +247,8 @@ export class DynamicFiltersComponent
   toggleAddDropdown() {
     this.isAddDropdownOpen.set(!this.isAddDropdownOpen());
     this.openDropdownIndex.set(-1);
-    setTimeout(() => {
-      this.loadAddNewFilterDropdownComponent();
-    });
+    this.cdr.detectChanges();
+    this.loadAddNewFilterDropdownComponent();
   }
 
   private loadAddNewFilterDropdownComponent() {
@@ -220,6 +288,7 @@ export class DynamicFiltersComponent
       filterGroup.get('operator')?.markAsUntouched();
     }
     this.openDropdownIndex.set(-1);
+    this.buildJQLQuery();
   }
 
   private destroyAddFilterDropdown() {
@@ -237,7 +306,7 @@ export class DynamicFiltersComponent
 
   onOperatorChange(index: number) {
     this.cdr.detectChanges();
-    setTimeout(() => this.loadValueComponent(index));
+    this.loadValueComponent(index);
   }
 
   private loadValueComponent(index: number) {

@@ -1,8 +1,5 @@
-import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
-
-import { FakeApiService } from './fake-api.service';
+import { CommonModule, NgFor } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
 import {
   DynamicFiltersComponent,
   FilterDefinition,
@@ -10,195 +7,170 @@ import {
   SelectOption,
 } from '@ngx-filter';
 import { Observable, of } from 'rxjs';
+import { ApiService } from './services/api.service';
+import { Product } from './models/product.model';
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, CommonModule, DynamicFiltersComponent],
+  imports: [CommonModule, DynamicFiltersComponent, NgFor],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
-  providers: [FakeApiService],
+  providers: [ApiService],
 })
-export class AppComponent {
-  filterColumnList: FilterDefinition[] = [
+export class AppComponent implements OnInit {
+  result: FilterResult[] = [];
+  productList: Product[] = [];
+  productFilterColumnList: FilterDefinition[] = [
     {
       field: 'name',
-      label: 'Restaurant Name',
       isVisibleInRow: true,
+      label: 'Product Name',
       type: {
         dataType: 'string',
       },
     },
     {
-      field: 'isActive',
-      label: 'Active Restaurants',
+      field: 'brand',
       isVisibleInRow: true,
+      label: 'Brand Name',
       type: {
-        dataType: 'boolean',
+        dataType: 'string',
       },
     },
     {
-      field: 'date',
-      label: 'Date',
+      field: 'category',
+      isVisibleInRow: true,
+      label: 'Category',
+      type: {
+        dataType: 'select',
+        isMultiple: true,
+        options: [
+          {
+            label: 'Choice Stuff',
+            value: 'Choice Stuff',
+          },
+          {
+            label: 'Home Supplies',
+            value: 'Home Supplies',
+          },
+        ],
+        onSearch: this.onSearchCategory(),
+        allowSearch: true,
+      },
+    },
+    {
+      field: 'releaseDate',
+      label: 'Release Date',
       isVisibleInRow: true,
       type: {
         dataType: 'date',
-        dateFormat: 'dd-MM-yyyy',
+        dateFormat: 'YYYY-MM-DD',
       },
     },
     {
-      field: 'rating',
-      label: 'Ratting',
-      isVisibleInRow: false,
+      field: 'createdAt',
+      label: 'Created Date',
+      isVisibleInRow: true,
       type: {
-        dataType: 'number',
+        dataType: 'date',
+        dateFormat: 'YYYY-MM-DD',
+      },
+    },
+    {
+      field: 'features',
+      isVisibleInRow: true,
+      label: 'Features',
+      type: {
+        dataType: 'select',
+        isMultiple: true,
+        options: [
+          {
+            label: 'Waterproof',
+            value: 'Waterproof',
+          },
+          {
+            label: 'Bluetooth',
+            value: 'Bluetooth',
+          },
+          {
+            label: 'GPS',
+            value: 'GPS',
+          },
+        ],
       },
     },
     {
       field: 'price',
       label: 'Price',
       isVisibleInRow: true,
-      fieldInformation: 'Filter records based on price range',
       type: {
         dataType: 'number',
       },
     },
     {
-      field: 'cuisine',
-      label: 'Cuisine',
+      field: 'rating',
+      label: 'Ratting',
       isVisibleInRow: true,
       type: {
-        dataType: 'select',
-        options: [
-          {
-            value: {
-              cuisine: 'North Indian',
-              origin: 'India',
-              spiceLevel: 'High',
-            },
-            label: 'North Indian',
-          },
-          {
-            value: {
-              cuisine: 'Mughlai',
-              origin: 'India (Mughal Empire)',
-              spiceLevel: 'Medium',
-            },
-            label: 'Mughlai',
-          },
-          {
-            value: {
-              cuisine: 'Continental',
-              origin: 'Europe',
-              spiceLevel: 'Low',
-            },
-            label: 'Continental',
-          },
-          {
-            value: {
-              cuisine: 'Italian',
-              origin: 'Italy',
-              spiceLevel: 'Low to Medium',
-            },
-            label: 'Italian',
-          },
-        ],
-        isMultiple:true
+        dataType: 'number',
       },
     },
     {
-      field: 'menu',
-      label: 'Menu',
+      field: 'isActive',
+      label: 'Is Active Products',
       isVisibleInRow: true,
       type: {
-        dataType: 'select',
-        options: [
-          { value: 'North Indian', label: 'North Indian' },
-          { value: 'Mughlai', label: 'Mughlai' },
-          { value: 'Continental', label: 'Continental' },
-          { value: 'Italian', label: 'Italian' },
-        ],
-        isMultiple: true,
-        allowSearch: true,
-        onSearch: this.onSearchFactory(),
-      },
-    },
-      {
-      field: 'oldMenu',
-      label: 'Old Menu',
-      isVisibleInRow: true,
-      type: {
-        dataType: 'select',
-        options: [
-          { value: 'North Indian', label: 'North Indian' },
-          { value: 'Mughlai', label: 'Mughlai' },
-          { value: 'Continental', label: 'Continental' },
-          { value: 'Italian', label: 'Italian' },
-        ],
-        isMultiple: true,
-        allowSearch: true,
-        onSearch: this.onSearchFactory(),
-      },
-    },
-    {
-      field: 'tags',
-      label: 'Tags',
-      isVisibleInRow: true,
-      fieldInformation: 'Filter records based on tags',
-      type: {
-        dataType: 'select',
-        options: [
-          {
-            value: {
-              cuisine: 'North Indian',
-              region: 'North',
-              spiceLevel: 'High',
-            },
-            label: 'North Indian',
-          },
-          {
-            value: {
-              cuisine: 'Mughlai',
-              region: 'North',
-              spiceLevel: 'Medium',
-            },
-            label: 'Mughlai',
-          },
-          {
-            value: {
-              cuisine: 'Continental',
-              region: 'Europe',
-              spiceLevel: 'Low',
-            },
-            label: 'Continental',
-          },
-          {
-            value: {
-              cuisine: 'Italian',
-              region: 'Italy',
-              spiceLevel: 'Low',
-            },
-            label: 'Italian',
-          },
-        ],
-        isMultiple: true,
-        allowSearch: false,
+        dataType: 'boolean',
       },
     },
   ];
 
-  result: FilterResult[] = [];
+  selectedFilters: FilterResult[] = []; // [{
+  //   field: 'brand',
+  //   operator: '=',
+  //   value: 'Apple',
+  //  }]
 
-  constructor(private fakeAPIService: FakeApiService) {}
+  constructor(private apiService: ApiService) {}
+
+  ngOnInit(): void {
+    this.getProductList();
+    this.setDefaultSelectedFilters();
+  }
+
+  setDefaultSelectedFilters() {
+    const filters = localStorage.getItem('SELECTED_FILLTER');
+    if (filters) {
+      this.selectedFilters = JSON.parse(filters) as FilterResult[];
+    } else {
+      this.selectedFilters = [];
+    }
+  }
 
   filterResults(event: FilterResult[]) {
     this.result = event;
+    
+    // Saving selected filters in local storage.
+    localStorage.setItem('SELECTED_FILLTER', JSON.stringify(this.result));
+
+    //filters API Call
+    this.apiService
+      .postData('products/filter', this.result)
+      .subscribe((res: Product[]) => {
+        this.productList = res;
+      });
   }
 
-  onSearchFactory(): (searchText: string) => Observable<SelectOption[]> {
+  onSearchCategory(): (searchText: string) => Observable<SelectOption[]> {
     return (searchText: string) => {
-      const searchResult = of(
-        this.fakeAPIService.filteredOptions(searchText)
-      ) as Observable<SelectOption[]>;
-      return searchResult;
+      return this.apiService.getOptions(searchText);
     };
+  }
+
+  getProductList() {
+    this.apiService.getData('products').subscribe((res: Product[]) => {
+      if (res && res.length) {
+        this.productList = res;
+      }
+    });
   }
 }

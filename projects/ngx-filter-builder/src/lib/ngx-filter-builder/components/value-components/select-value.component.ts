@@ -126,7 +126,7 @@ export class SelectValueComponent extends UnsubscribeBase implements OnInit {
 
       try {
         const result = await lastValueFrom(from(this.onSearch(searchTerm)));
-        this.filteredOptions = Array.isArray(result) ? result : [result];
+        this.filteredOptions = Array.isArray(result) ? result : [result];        
       } catch (error) {
         this.filteredOptions = [];
       } finally {

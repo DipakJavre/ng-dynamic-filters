@@ -38,9 +38,7 @@ export const operatorsMap = {
     { label: 'Contains', value: 'contains' },
     { label: 'Does Not Contain', value: 'not contains' },
     { label: 'Starts With', value: 'startsWith' },
-    { label: 'Ends With', value: 'endsWith' },
-    { label: 'In', value: 'in' },
-    { label: 'Not In', value: 'not in' },
+    { label: 'Ends With', value: 'endsWith' }
   ],
   number: [
     { label: 'Equals', value: '=' },
@@ -50,8 +48,6 @@ export const operatorsMap = {
     { label: 'Greater Than', value: '>' },
     { label: 'Greater Than or Equal', value: '>=' },
     { label: 'Between', value: 'between' },
-    { label: 'In', value: 'in' },
-    { label: 'Not In', value: 'not in' },
   ],
   date: [
     { label: 'Equals', value: '=' },
@@ -80,11 +76,22 @@ export const operatorsMap = {
   ],
 };
 
+
 export type SupportedDateFormats =
-  | 'yyyy-MM-dd'
-  | 'dd/MM/yyyy'
-  | 'MM/dd/yyyy'
-  | 'MMMM dd, yyyy'
-  | 'dd MMM, yyyy'
-  | 'yyyy/MM/dd'
-  | 'dd-MM-yyyy';
+  | 'YYYY-MM-DD'           // 2025-06-10
+  | 'DD-MM-YYYY'           // 10-06-2025
+  | 'MM-DD-YYYY'           // 06-10-2025
+  | 'DD/MM/YYYY'           // 10/06/2025
+  | 'MM/DD/YYYY'           // 06/10/2025
+  | 'YYYY/MM/DD'           // 2025/06/10
+  | 'D MMMM YYYY'          // 10 June 2025
+  | 'MMMM D, YYYY'         // June 10, 2025
+  | 'MMM D, YYYY'          // Jun 10, 2025
+  | 'D-MMM-YYYY'           // 10-Jun-2025
+  | 'Do MMMM YYYY'         // 10th June 2025
+  | 'dddd, D MMMM YYYY'    // Tuesday, 10 June 2025
+  | 'DD MMM YYYY'          // 10 Jun 2025
+  | 'YYYY.MM.DD'           // 2025.06.10
+  | 'DD.MM.YYYY';          // 10.06.2025
+
+

@@ -5,11 +5,11 @@ import {
   FormControl,
   Validators,
 } from '@angular/forms';
-import { CommonModule, DatePipe } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { takeUntil } from 'rxjs';
 import { UnsubscribeBase } from '../../services/unsubscribe-subscription';
-import * as _ from 'lodash';
-
+import moment from 'moment';
+import { SupportedDateFormats } from '../../utils/common-utilities';
 @Component({
   standalone: true,
   selector: 'app-date-value',
@@ -23,7 +23,9 @@ import * as _ from 'lodash';
           type="date"
           class="field-input w-100"
           (click)="openDatePicker($event)"
-          [value]="getFormattedDate(formGroup.get('value')?.value)"
+          [value]="
+            autoDetectToNativeDateFormat(formGroup.get('value')?.value) || ''
+          "
           (change)="onSingleDateChange($event)"
         />
       </div>
@@ -69,11 +71,10 @@ import * as _ from 'lodash';
     </div>
   `,
   imports: [CommonModule, ReactiveFormsModule],
-  providers: [DatePipe],
 })
 export class DateValueComponent extends UnsubscribeBase implements OnInit {
   @Input() formGroup!: FormGroup;
-  @Input() dateFormat: string = 'yyyy-MM-dd';
+  @Input() dateFormat: string = 'DD-MM-YYYY';
 
   isBetween = false;
   showValidationError = false;
@@ -81,16 +82,21 @@ export class DateValueComponent extends UnsubscribeBase implements OnInit {
   fromControl = new FormControl<string | null>(null, Validators.required);
   toControl = new FormControl<string | null>(null, Validators.required);
 
-  constructor(private datePipe: DatePipe) {
+  constructor() {
     super();
   }
 
   ngOnInit(): void {
-    this.isBetween = this.formGroup.value?.operator === 'between';    
+    this.isBetween = this.formGroup.value?.operator === 'between';
+
     if (this.isBetween) {
       const currentValue = this.formGroup.value?.value;
-      this.fromControl.setValue(this.getFormattedDate(currentValue?.from) ?? null);
-      this.toControl.setValue(this.getFormattedDate(currentValue?.to) ?? null);
+      this.fromControl.setValue(
+        this.autoDetectToNativeDateFormat(currentValue?.from) ?? null
+      );
+      this.toControl.setValue(
+        this.autoDetectToNativeDateFormat(currentValue?.to) ?? null
+      );
 
       this.fromControl.valueChanges
         .pipe(takeUntil(this.destroy$))
@@ -102,56 +108,69 @@ export class DateValueComponent extends UnsubscribeBase implements OnInit {
     }
   }
 
-  onSingleDateChange(rawValue: Event): void {
-    const input = rawValue.target as HTMLInputElement;
-    const formatted = this.formatDate(input.value);
-    this.formGroup.get('value')?.setValue(formatted);
+  onSingleDateChange(event: Event): void {
+    const input = event.target as HTMLInputElement;
+
+    this.formGroup.get('value')?.setValue(this.formatDate(input.value));
+  }
+
+  autoDetectToNativeDateFormat(dateStr: string): string {
+    const supportedFormats: SupportedDateFormats[] = [
+      'YYYY-MM-DD',
+      'DD-MM-YYYY',
+      'MM-DD-YYYY',
+      'DD/MM/YYYY',
+      'MM/DD/YYYY',
+      'YYYY/MM/DD',
+      'D MMMM YYYY',
+      'MMMM D, YYYY',
+      'MMM D, YYYY',
+      'D-MMM-YYYY',
+      'Do MMMM YYYY',
+      'dddd, D MMMM YYYY',
+      'DD MMM YYYY',
+      'YYYY.MM.DD',
+      'DD.MM.YYYY',
+    ];
+
+    for (const format of supportedFormats) {
+      const parsed = moment(dateStr, format, true);
+      if (parsed.isValid()) {
+        return parsed.format('YYYY-MM-DD');
+      }
+    }
+    return '';
+  }
+
+  formatDate(date: string) {
+    const formatedDate = moment(date).format(this.dateFormat);
+    return formatedDate;
   }
 
   private updateRange(): void {
-    const from = this.fromControl.value;
-    const to = this.toControl.value;
+    const from = this.formatDate(
+      this.fromControl.value ? this.fromControl.value : ''
+    );
+    const to = this.formatDate(
+      this.toControl.value ? this.toControl.value : ''
+    );
 
     const bothPresent = this.fromControl.valid && this.toControl.valid;
 
     this.showValidationError = bothPresent && new Date(from!) > new Date(to!);
 
     if (bothPresent && !this.showValidationError) {
-      const result = {
-        from: this.formatDate(from!),
-        to: this.formatDate(to!),
-      };
+      const result = { from, to };
       this.formGroup.get('value')?.setValue(result);
     } else {
       this.formGroup.get('value')?.setValue(null);
     }
   }
 
-  private formatDate(value: string | Date): string {
-    const parsed = new Date(value);
-
-    if (!_.isDate(parsed) || isNaN(parsed.getTime())) {
-      return value.toString();
-    }
-
-    // Format using native `Intl.DateTimeFormat` (dd-MMM-yyyy)
-    return new Intl.DateTimeFormat('en-GB', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric',
-    }).format(parsed);
-  }
-
-  getFormattedDate(value: string): string {
-    if (!value) return '';
-    const parsed = new Date(value);
-    return this.datePipe.transform(parsed, 'yyyy-MM-dd') ?? '';
-  }
-
   openDatePicker(event: Event): void {
-  const input = event.target as HTMLInputElement;
-  if (input?.showPicker) {
-    input.showPicker();
+    const input = event.target as HTMLInputElement;
+    if (input?.showPicker) {
+      input.showPicker();
+    }
   }
-}
 }
