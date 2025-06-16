@@ -1,4 +1,4 @@
-import { CommonModule, NgFor } from '@angular/common';
+import { CommonModule, NgFor, NgIf } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import {
   DynamicFiltersComponent,
@@ -6,17 +6,18 @@ import {
   FilterResult,
   SelectOption,
 } from '@ngx-filter';
-import { Observable, of } from 'rxjs';
+import { Observable, takeUntil } from 'rxjs';
 import { ApiService } from './services/api.service';
 import { Product } from './models/product.model';
+import { UnsubscribeBase } from '../../projects/ngx-filter-builder/src/lib/ngx-filter-builder/services/unsubscribe-subscription';
 @Component({
   selector: 'app-root',
-  imports: [CommonModule, DynamicFiltersComponent, NgFor],
+  imports: [CommonModule, DynamicFiltersComponent, NgFor, NgIf],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
   providers: [ApiService],
 })
-export class AppComponent implements OnInit {
+export class AppComponent extends UnsubscribeBase implements OnInit {
   result: FilterResult[] = [];
   productList: Product[] = [];
   productFilterColumnList: FilterDefinition[] = [
@@ -130,7 +131,9 @@ export class AppComponent implements OnInit {
   //   value: 'Apple',
   //  }]
 
-  constructor(private apiService: ApiService) {}
+  constructor(private apiService: ApiService) {
+    super();
+  }
 
   ngOnInit(): void {
     this.getProductList();
@@ -155,6 +158,7 @@ export class AppComponent implements OnInit {
     //filters API Call
     this.apiService
       .postData('products/filter', this.result)
+      .pipe(takeUntil(this.destroy$))
       .subscribe((res: Product[]) => {
         this.productList = res;
       });
@@ -167,10 +171,12 @@ export class AppComponent implements OnInit {
   }
 
   getProductList() {
-    this.apiService.getData('products').subscribe((res: Product[]) => {
-      if (res && res.length) {
-        this.productList = res;
-      }
-    });
+    this.apiService.getData('products')
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((res: Product[]) => {
+        if (res && res.length) {
+          this.productList = res;
+        }
+      });
   }
 }

@@ -91,6 +91,20 @@ $color-placeholder: var(--ngx-filter-color-placeholder);
   cursor: pointer;
 }
 
+.apply-filter-btn-link{
+  color: var(--ngx-filter-color-background);
+  cursor: pointer;
+  font-size: 14px;
+  border: 1px solid var(--ngx-filter-color-border);
+  padding: 0 10px 0 10px;
+  background-color: var(--ngx-filter-color-primary);
+  border-radius: 4px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .close-icon {
   cursor: pointer;
   width: 15px;

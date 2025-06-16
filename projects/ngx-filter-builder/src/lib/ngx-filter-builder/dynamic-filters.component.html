@@ -29,13 +29,14 @@
             ></lib-selected-filter-editor>
           </ng-template>
 
-         
           <div
             class="info-icon"
             *ngIf="isTouchedAndInvalid(fg)"
             [attr.title]="getFieldTooltipTitle(fg)"
           >
-            <span class="text-danger ms-2 validation-error-icon"> &#8861; </span>
+            <span class="text-danger ms-2 validation-error-icon">
+              &#8861;
+            </span>
           </div>
           <div
             class="info-icon ms-3"
@@ -44,7 +45,7 @@
           >
             <span class="info-icon-circle">𝒊</span>
           </div>
-           <div class="ms-3 d-flex">
+          <div class="ms-3 d-flex">
             <span class="caret-down"></span>
           </div>
         </div>
@@ -68,10 +69,13 @@
         </div>
       </div>
     </ng-container>
-    <div class="position-relative" #addDropdownWrapper>
+    <div class="position-relative d-flex gap-2" #addDropdownWrapper>
       <button type="button" class="add-btn" (click)="toggleAddDropdown()">
         &#x2b; Add
       </button>
+      <p class="m-0 mt-auto mb-auto apply-filter-btn-link" (click)="emitFilters()" *ngIf="!autoApplyFilters">
+        Apply
+      </p>
       <div class="all-filter-list" *ngIf="isAddDropdownOpen()">
         <ng-template #addDropdownDynamicContainer></ng-template>
       </div>
@@ -80,7 +84,10 @@
   <div class="mt-4" *ngIf="jqlQuery()">
     <div class="alert alert-success w-100">
       <h5 class="m-0">
-        <pre class="m-0 text-wrap" [innerHTML]="jqlQuery() | highlightJql"></pre>
+        <pre
+          class="m-0 text-wrap"
+          [innerHTML]="jqlQuery() | highlightJql"
+        ></pre>
       </h5>
     </div>
   </div>

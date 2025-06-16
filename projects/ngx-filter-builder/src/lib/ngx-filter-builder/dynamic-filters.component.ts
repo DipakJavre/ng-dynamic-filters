@@ -76,6 +76,8 @@ export class DynamicFiltersComponent
 
   filtersForm!: FormGroup;
 
+  @Input() autoApplyFilters: boolean = true;
+
   @Input() selectedFilters: FilterResult[] = [];
 
   @Input() filterList: FilterDefinition[] = [];
@@ -124,7 +126,7 @@ export class DynamicFiltersComponent
 
   private handleFilterValueChange(filterGroup: AbstractControl): void {
     const value = filterGroup.get('value')?.value;
-    const operatorValue = filterGroup.get('operator')?.value;    
+    const operatorValue = filterGroup.get('operator')?.value;
 
     if (
       operatorValue &&
@@ -135,13 +137,13 @@ export class DynamicFiltersComponent
       return;
     }
 
-    const isValidValue =
-      (value !== null && value !== undefined && value !== '');
+    const isValidValue = value !== null && value !== undefined && value !== '';
 
     if (isValidValue) {
       this.buildJQLQuery();
     }
   }
+
   private buildJQLQuery(): void {
     const filters: FilterResult[] =
       this.filtersForm.get('filters')?.value || [];
@@ -151,17 +153,24 @@ export class DynamicFiltersComponent
       return;
     }
 
-    const hasInvalidFilters = filters.some(
-      (filter: FilterResult) => typeof filter.value !== 'boolean' && filter.operator && (!filter.value)
-    );
-
-    if (hasInvalidFilters) {
+    if (this.checkInvalidFilters(filters)) {
       return;
     }
 
     const jqlQueryString = this.queryBuilderService.buildJqlQuery(filters);
     this.jqlQuery.set(jqlQueryString);
+    if (this.autoApplyFilters) {
+      this.emitFilters();
+    }
+  }
 
+  emitFilters() {
+    const filters: FilterResult[] =
+      this.filtersForm.get('filters')?.value || [];
+
+    if (this.checkInvalidFilters(filters)) {
+      return;
+    }
     const selectedFilters = filters
       .filter(
         (filter: FilterResult) =>
@@ -177,6 +186,17 @@ export class DynamicFiltersComponent
       }));
 
     this.result.emit(selectedFilters);
+  }
+
+  checkInvalidFilters(filters: FilterResult[]): boolean {
+    const hasInvalidFilters = filters.some(
+      (filter: FilterResult) =>
+        typeof filter.value !== 'boolean' && filter.operator && !filter.value
+    );
+
+    if (hasInvalidFilters) {
+      return true;
+    } else return false;
   }
 
   private initializeFiltersForm(): void {
@@ -345,7 +365,7 @@ export class DynamicFiltersComponent
 
     if (fieldType === 'date') {
       instance.dateFormat =
-        this.filterList[index]?.type?.dateFormat || 'dd/MM/yyyy';
+        this.filterList[index]?.type?.dateFormat || 'YYYY-MM-DD';
     }
   }
 
